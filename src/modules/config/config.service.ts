@@ -9,9 +9,9 @@ export class ConfigService {
 
   constructor() {
     const envFile =
-      process.env.NODE_ENV === 'development'
-        ? '.env.development'
-        : '.env.production';
+      process.env.NODE_ENV === 'production'
+        ? '.env.production'
+        : '.env.development';
     const envPath = path.resolve(__dirname, '../../../', envFile);
     this.envConfig = dotenv.parse(fs.readFileSync(envPath));
   }

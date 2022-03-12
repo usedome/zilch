@@ -1,6 +1,7 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
+import { IsDefined, IsString } from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { Service } from '../service/service.schema';
+import { Resource } from '../resource/resource.schema';
 
 export type BackupDocument = Backup & Document;
 
@@ -8,6 +9,21 @@ export type BackupDocument = Backup & Document;
 export class Backup {
   _id: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Service', required: true })
-  service: Service;
+  uuid: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Resource',
+    required: true,
+  })
+  resource: Resource;
+
+  @IsString()
+  @IsDefined()
+  @Prop({
+    type: MongooseSchema.Types.Mixed,
+    required: true,
+    set: (value) => JSON.parse(value),
+  })
+  value: { [key: string]: any };
 }

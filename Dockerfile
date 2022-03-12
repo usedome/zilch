@@ -12,6 +12,8 @@ RUN yarn add glob rimraf
 
 RUN yarn install
 
+ENV NODE_ENV=production
+
 COPY . .
 
 RUN yarn build

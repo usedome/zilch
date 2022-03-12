@@ -8,6 +8,8 @@ RUN yarn global add @nestjs/cli
 
 RUN yarn install
 
+ENV NODE_ENV=development
+
 COPY . .
 
 EXPOSE 3000

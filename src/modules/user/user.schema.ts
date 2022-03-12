@@ -7,6 +7,8 @@ export type UserDocument = User & Document;
 export class User {
   _id: MongooseSchema.Types.ObjectId;
 
+  uuid: string;
+
   @Prop({ type: String, required: true })
   name: string;
 

@@ -9,6 +9,8 @@ export type ServiceDocument = Service & Document;
 export class Service {
   _id: MongooseSchema.Types.ObjectId;
 
+  uuid: string;
+
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   user: User;
 

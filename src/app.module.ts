@@ -7,6 +7,7 @@ import { ConfigService } from './modules/config/config.service';
 import { UserModule } from './modules/user/user.module';
 import { ServiceModule } from './modules/service/service.module';
 import { BackupModule } from './modules/backup/backup.module';
+import { ResourceModule } from './modules/resource/resource.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { BackupModule } from './modules/backup/backup.module';
     UserModule,
     ServiceModule,
     BackupModule,
+    ResourceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
