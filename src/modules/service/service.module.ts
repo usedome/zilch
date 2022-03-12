@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { uuidPlugin } from 'src/utilities';
 import { Service, ServiceSchema } from './service.schema';
 
 @Module({
@@ -9,6 +10,7 @@ import { Service, ServiceSchema } from './service.schema';
         name: Service.name,
         useFactory: () => {
           const schema = ServiceSchema;
+          schema.plugin(uuidPlugin);
           return schema;
         },
       },

@@ -27,3 +27,5 @@ export class Backup {
   })
   value: { [key: string]: any };
 }
+
+export const BackupSchema = SchemaFactory.createForClass(Backup);
