@@ -8,6 +8,8 @@ import { UserModule } from './modules/user/user.module';
 import { ServiceModule } from './modules/service/service.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { ResourceModule } from './modules/resource/resource.module';
+import { AccountModule } from './modules/account/account.module';
+import { TokenModule } from './modules/token/token.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { ResourceModule } from './modules/resource/resource.module';
     ServiceModule,
     BackupModule,
     ResourceModule,
+    AccountModule,
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
