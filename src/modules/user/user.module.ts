@@ -18,5 +18,6 @@ import { uuidPlugin } from 'src/utilities';
     ]),
   ],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}
