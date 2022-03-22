@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UnguardedRoute } from 'src/utilities';
 import { TokenService } from './token.service';
@@ -7,11 +7,11 @@ import { TokenService } from './token.service';
 export class TokenController {
   constructor(private tokenService: TokenService) {}
 
-  @Get()
+  @Post()
   @UnguardedRoute()
   @UseGuards(AuthGuard('google'))
   async create(@Req() req, @Res({ passthrough: true }) res) {
-    // const token = await this.tokenService.
-    return req.user;
+    const token = await this.tokenService.generate(req.user._id);
+    res.status(201).json({ user: req.user, token });
   }
 }
