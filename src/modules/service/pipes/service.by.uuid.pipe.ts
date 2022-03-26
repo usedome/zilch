@@ -17,7 +17,7 @@ export class ServiceByUuidPipe implements PipeTransform {
       handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
     }
 
-    if (service.user._id !== this.request.user._id) {
+    if (service.user._id.toString() !== this.request.user._id.toString()) {
       handleException(
         HttpStatus.FORBIDDEN,
         'service-002',

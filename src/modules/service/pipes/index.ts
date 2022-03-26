@@ -1,1 +1,1 @@
-export * from './create.service.pipe';
+export * from './edit.service.pipe';

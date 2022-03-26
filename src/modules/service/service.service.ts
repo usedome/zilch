@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Service, ServiceDocument } from './service.schema';
-import { Model } from 'mongoose';
-import { CreateServiceDto } from './dto';
+import { Model, HydratedDocument } from 'mongoose';
+import { CreateServiceDto, UpdateServiceDto } from './dto';
 
 @Injectable()
 export class ServiceService {
@@ -37,5 +37,13 @@ export class ServiceService {
     const total = await this.service.countDocuments(filter);
     const maxPages = Math.ceil(total / limit);
     return { currentPage: page, maxPages };
+  }
+
+  async update(service: HydratedDocument<Service>, dto: UpdateServiceDto) {
+    Object.entries(dto).forEach(([key, value]) => {
+      service[key] = value;
+    });
+    await service.save();
+    return service;
   }
 }

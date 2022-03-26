@@ -6,12 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Req,
   Res,
 } from '@nestjs/common';
-import { CreateServiceDto } from './dto';
-import { CreateServicePipe } from './pipes';
+import { CreateServiceDto, UpdateServiceDto } from './dto';
+import { EditServicePipe } from './pipes';
 import { ServiceByUuidPipe } from './pipes/service.by.uuid.pipe';
 import { ServiceService } from './service.service';
 import { HydratedDocument } from 'mongoose';
@@ -23,7 +24,7 @@ export class ServiceController {
 
   @Post()
   async create(
-    @Body(CreateServicePipe) dto: CreateServiceDto,
+    @Body(EditServicePipe) dto: CreateServiceDto,
     @Req() req,
     @Res({ passthrough: true }) res,
   ) {
@@ -51,5 +52,14 @@ export class ServiceController {
     @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
   ) {
     return { service, message: 'service fetched successfully' };
+  }
+
+  @Put('/:uuid')
+  async update(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Body(EditServicePipe) body: UpdateServiceDto,
+  ) {
+    const updatedService = await this.serviceService.update(service, body);
+    return { service: updatedService, message: 'service updated successfully' };
   }
 }
