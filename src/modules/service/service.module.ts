@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { uuidPlugin } from 'src/utilities';
+import { servicePlugin, uuidPlugin } from 'src/utilities';
 import { Service, ServiceSchema } from './service.schema';
 import { ServiceController } from './service.controller';
 import { ServiceService } from './service.service';
@@ -13,6 +13,7 @@ import { ServiceService } from './service.service';
         useFactory: () => {
           const schema = ServiceSchema;
           schema.plugin(uuidPlugin);
+          schema.plugin(servicePlugin);
           return schema;
         },
       },

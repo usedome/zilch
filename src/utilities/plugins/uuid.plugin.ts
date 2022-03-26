@@ -4,7 +4,6 @@ import { Types } from 'mongoose';
 
 export const uuidPlugin = (schema: Schema) => {
   schema.pre('save', function (next) {
-    console.log(this);
     if (!this.uuid) {
       this.uuid = uuidV4();
     }

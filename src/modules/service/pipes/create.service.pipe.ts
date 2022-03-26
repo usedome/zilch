@@ -21,7 +21,7 @@ export class CreateServicePipe implements PipeTransform {
     if (service) {
       handleException(
         HttpStatus.BAD_REQUEST,
-        'service-001',
+        'service-003',
         `service exists with ${value.name} name for this user.`,
       );
     }

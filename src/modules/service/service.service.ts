@@ -22,6 +22,7 @@ export class ServiceService {
     const skip = (page - 1) * limit;
     const services = await this.service
       .find({ ...filter })
+      .sort({ created_at: 'desc' })
       .skip(skip)
       .limit(limit);
     const pagination = await this.getPagination(filter, page, limit);
