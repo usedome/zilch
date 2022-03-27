@@ -9,6 +9,7 @@ export type ResourceDocument = Resource & Document;
 export class Resource {
   _id: MongooseSchema.Types.ObjectId;
 
+  @Prop({ type: String })
   uuid: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Service', required: true })
