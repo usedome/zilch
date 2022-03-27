@@ -8,13 +8,16 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Query,
+  Put,
 } from '@nestjs/common';
 import { Service } from '../service/service.schema';
-import { CreateResourceDto } from './dto';
+import { CreateResourceDto, UpdateResourceDto } from './dto';
 import { EditResourcePipe } from './pipes';
 import { HydratedDocument } from 'mongoose';
 import { ResourceService } from './resource.service';
 import { ServiceByUuidPipe } from '../service/pipes/service.by.uuid.pipe';
+import { Resource } from './resource.schema';
+import { ResourceByUuidPipe } from './pipes/resource.by.uuid.pipe';
 
 @Controller('/services/:service_uuid/resources')
 export class ResourceController {
@@ -51,5 +54,28 @@ export class ResourceController {
     );
 
     return { resources, pagination, message: 'resources fetched successfully' };
+  }
+
+  @Get('/:resource_uuid')
+  async getOne(
+    @Param('service_uuid', ServiceByUuidPipe)
+    service: HydratedDocument<Service>,
+    @Param('resource_uuid', ResourceByUuidPipe)
+    resource: HydratedDocument<Resource>,
+  ) {
+    return { resource, message: 'resource fetched successfully' };
+  }
+
+  @Put('/:resource_uuid')
+  async update(
+    @Param('resource_uuid', ResourceByUuidPipe)
+    resource: HydratedDocument<Resource>,
+    @Body(EditResourcePipe) body: UpdateResourceDto,
+  ) {
+    const updatedResource = await this.resourceService.update(resource, body);
+    return {
+      resource: updatedResource,
+      message: 'resource updated successfully',
+    };
   }
 }
