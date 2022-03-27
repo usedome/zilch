@@ -9,6 +9,7 @@ export type BackupDocument = Backup & Document;
 export class Backup {
   _id: MongooseSchema.Types.ObjectId;
 
+  @Prop({ type: String })
   uuid: string;
 
   @Prop({

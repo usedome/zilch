@@ -13,6 +13,13 @@ export class ResourceByUuidPipe implements PipeTransform {
   ) {}
 
   async transform(uuid: string) {
+    if (this.request.params.service_uuid)
+      return this.handleResourceRequest(uuid);
+
+    return this.handleBackupRequest(uuid);
+  }
+
+  async handleResourceRequest(uuid: string) {
     const { params, user } = this.request;
     const service = await this.serviceService.findOne({
       uuid: params.service_uuid,
@@ -33,6 +40,24 @@ export class ResourceByUuidPipe implements PipeTransform {
     });
 
     if (!resource) {
+      handleException(
+        HttpStatus.NOT_FOUND,
+        'resource-001',
+        'resource does not exist',
+      );
+    }
+
+    return resource;
+  }
+
+  async handleBackupRequest(uuid: string) {
+    const { user } = this.request;
+    const resource = await this.resourceService.findOne({ uuid });
+
+    if (
+      !resource ||
+      resource.service.user._id.toString() !== user._id.toString()
+    ) {
       handleException(
         HttpStatus.NOT_FOUND,
         'resource-001',
