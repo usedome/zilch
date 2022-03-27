@@ -11,7 +11,11 @@ import {
   Put,
 } from '@nestjs/common';
 import { Service } from '../service/service.schema';
-import { CreateResourceDto, UpdateResourceDto } from './dto';
+import {
+  CreateResourceDto,
+  EditResourcePipeDto,
+  UpdateResourceDto,
+} from './dto';
 import { EditResourcePipe } from './pipes';
 import { HydratedDocument } from 'mongoose';
 import { ResourceService } from './resource.service';
@@ -25,15 +29,14 @@ export class ResourceController {
 
   @Post()
   async create(
-    @Param('service_uuid', ServiceByUuidPipe)
-    service: HydratedDocument<Service>,
     @Body(EditResourcePipe)
-    body: CreateResourceDto,
+    { body, service }: any,
     @Res({ passthrough: true }) res,
   ) {
+    const _id = String((service as HydratedDocument<Service>)._id);
     const resource = await this.resourceService.create(
-      body,
-      String(service._id),
+      body as CreateResourceDto,
+      _id,
     );
     res
       .status(201)
@@ -58,8 +61,6 @@ export class ResourceController {
 
   @Get('/:resource_uuid')
   async getOne(
-    @Param('service_uuid', ServiceByUuidPipe)
-    service: HydratedDocument<Service>,
     @Param('resource_uuid', ResourceByUuidPipe)
     resource: HydratedDocument<Resource>,
   ) {
@@ -67,11 +68,7 @@ export class ResourceController {
   }
 
   @Put('/:resource_uuid')
-  async update(
-    @Param('resource_uuid', ResourceByUuidPipe)
-    resource: HydratedDocument<Resource>,
-    @Body(EditResourcePipe) body: UpdateResourceDto,
-  ) {
+  async update(@Body(EditResourcePipe) { body, resource }: any) {
     const updatedResource = await this.resourceService.update(resource, body);
     return {
       resource: updatedResource,

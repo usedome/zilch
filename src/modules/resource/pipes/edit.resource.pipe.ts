@@ -2,7 +2,11 @@ import { Injectable, PipeTransform, HttpStatus, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ServiceService } from 'src/modules/service/service.service';
 import { handleException } from 'src/utilities';
-import { CreateResourceDto, UpdateResourceDto } from '../dto';
+import {
+  CreateResourceDto,
+  EditResourcePipeDto,
+  UpdateResourceDto,
+} from '../dto';
 import { ResourceService } from '../resource.service';
 import { HydratedDocument } from 'mongoose';
 import { Resource } from '../resource.schema';
@@ -16,21 +20,17 @@ export class EditResourcePipe implements PipeTransform {
     private serviceService: ServiceService,
   ) {}
 
-  async transform(value: CreateResourceDto | UpdateResourceDto) {
+  async transform(
+    value: CreateResourceDto | UpdateResourceDto,
+  ): Promise<EditResourcePipeDto> {
+    const { params, user } = this.request;
     const service = await this.serviceService.findOne({
-      uuid: this.request.params.service_uuid,
+      uuid: params.service_uuid,
+      user: user._id,
     });
 
     if (!service) {
       handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
-    }
-
-    if (service.user._id.toString() !== this.request.user._id.toString()) {
-      handleException(
-        HttpStatus.FORBIDDEN,
-        'service-002',
-        'user lacks the required permissions',
-      );
     }
 
     let resource;
@@ -50,7 +50,17 @@ export class EditResourcePipe implements PipeTransform {
         resource,
       );
 
-    return this.handlePutMethod(value as UpdateResourceDto, service, resource);
+    const resourceToUpdate = await this.resourceService.findOne({
+      uuid: params.resource_uuid,
+      service: service._id,
+    });
+
+    return this.handlePutMethod(
+      value as UpdateResourceDto,
+      service,
+      resourceToUpdate,
+      resource,
+    );
   }
 
   handlePostMethod(
@@ -66,14 +76,23 @@ export class EditResourcePipe implements PipeTransform {
       );
     }
 
-    return value;
+    return { body: value, service, resource };
   }
 
   handlePutMethod(
     value: UpdateResourceDto,
     service: HydratedDocument<Service>,
+    resourceToUpdate?: HydratedDocument<Resource>,
     resource?: HydratedDocument<Resource>,
   ) {
+    if (!resourceToUpdate) {
+      handleException(
+        HttpStatus.NOT_FOUND,
+        'resource-001',
+        `resource does not exist`,
+      );
+    }
+
     if (value.name) {
       if (resource && resource.uuid !== this.request.params.resource_uuid) {
         handleException(
@@ -83,6 +102,6 @@ export class EditResourcePipe implements PipeTransform {
         );
       }
     }
-    return value;
+    return { body: value, service, resource };
   }
 }

@@ -11,18 +11,13 @@ export class ServiceByUuidPipe implements PipeTransform {
   ) {}
 
   async transform(uuid: string) {
-    const service = await this.serviceService.findOne({ uuid });
+    const service = await this.serviceService.findOne({
+      uuid,
+      user: this.request.user._id,
+    });
 
     if (!service) {
       handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
-    }
-
-    if (service.user._id.toString() !== this.request.user._id.toString()) {
-      handleException(
-        HttpStatus.FORBIDDEN,
-        'service-002',
-        'user lacks the required permissions',
-      );
     }
 
     return service;

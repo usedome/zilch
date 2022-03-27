@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable, PipeTransform, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { ServiceService } from 'src/modules/service/service.service';
 import { handleException } from 'src/utilities';
 import { ResourceService } from '../resource.service';
 
@@ -8,34 +9,34 @@ export class ResourceByUuidPipe implements PipeTransform {
   constructor(
     @Inject(REQUEST) private request,
     private resourceService: ResourceService,
+    private serviceService: ServiceService,
   ) {}
 
   async transform(uuid: string) {
-    const resource = await this.resourceService.findOne({ uuid });
+    const { params, user } = this.request;
+    const service = await this.serviceService.findOne({
+      uuid: params.service_uuid,
+      user: user._id,
+    });
+
+    if (!service) {
+      handleException(
+        HttpStatus.NOT_FOUND,
+        'service-001',
+        'service does not exist',
+      );
+    }
+
+    const resource = await this.resourceService.findOne({
+      uuid,
+      service: service._id,
+    });
 
     if (!resource) {
       handleException(
         HttpStatus.NOT_FOUND,
         'resource-001',
         'resource does not exist',
-      );
-    }
-
-    if (resource.service.uuid !== this.request.params.service_uuid) {
-      handleException(
-        HttpStatus.BAD_REQUEST,
-        'resource-004',
-        'resource does not belong to the specified service',
-      );
-    }
-
-    if (
-      resource.service.user._id.toString() !== this.request.user._id.toString()
-    ) {
-      handleException(
-        HttpStatus.FORBIDDEN,
-        'resource-002',
-        'user lacks the required permissions',
       );
     }
 
