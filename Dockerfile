@@ -1,4 +1,4 @@
-FROM node:17-alpine
+FROM node:17-alpine AS production
 
 WORKDIR usr/src/app
 
@@ -6,13 +6,9 @@ RUN rm -rf dist
 
 COPY package*.json ./
 
-RUN yarn global add @nestjs/cli
-
 RUN yarn add glob rimraf
 
 RUN yarn install
-
-ENV NODE_ENV=production
 
 COPY . .
 
