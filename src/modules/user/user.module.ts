@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './user.schema';
 import { userPlugin, uuidPlugin } from 'src/utilities';
 import { UserController } from './user.controller';
+import { ServiceModule } from '../service/service.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserController } from './user.controller';
         },
       },
     ]),
+    forwardRef(() => ServiceModule),
   ],
   providers: [UserService],
   exports: [UserService],

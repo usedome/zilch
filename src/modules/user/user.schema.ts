@@ -22,6 +22,9 @@ export class User {
   @Prop({ type: String, required: true })
   avatar: string;
 
+  @Prop({ type: String })
+  active_service?: string;
+
   services: Service[];
 }
 

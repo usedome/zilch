@@ -17,10 +17,14 @@ import { ServiceByUuidPipe } from './pipes/service.by.uuid.pipe';
 import { ServiceService } from './service.service';
 import { HydratedDocument } from 'mongoose';
 import { Service } from './service.schema';
+import { UserService } from '../user/user.service';
 
 @Controller('services')
 export class ServiceController {
-  constructor(private serviceService: ServiceService) {}
+  constructor(
+    private serviceService: ServiceService,
+    private userService: UserService,
+  ) {}
 
   @Post()
   async create(
@@ -28,7 +32,11 @@ export class ServiceController {
     @Req() req,
     @Res({ passthrough: true }) res,
   ) {
-    const service = await this.serviceService.create({ ...dto }, req.user._id);
+    const { user } = req;
+    const service = await this.serviceService.create({ ...dto }, user._id);
+    if (!user.active_service) {
+      await this.userService.update(user, { active_service: service._id });
+    }
     res.status(201).json({ service, message: 'service created successfully' });
   }
 
