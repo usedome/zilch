@@ -1,9 +1,13 @@
 import { SchemaFactory, Schema, Prop } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Service } from '../service/service.schema';
 
 export type UserDocument = User & Document;
 
-@Schema({ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
+@Schema({
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  toJSON: { virtuals: true },
+})
 export class User {
   _id: MongooseSchema.Types.ObjectId;
 
@@ -17,6 +21,8 @@ export class User {
 
   @Prop({ type: String, required: true })
   avatar: string;
+
+  services: Service[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './user.schema';
-import { uuidPlugin } from 'src/utilities';
+import { userPlugin, uuidPlugin } from 'src/utilities';
 import { UserController } from './user.controller';
 
 @Module({
@@ -13,6 +13,12 @@ import { UserController } from './user.controller';
         useFactory: () => {
           const schema = UserSchema;
           schema.plugin(uuidPlugin);
+          schema.plugin(userPlugin);
+          schema.virtual('services', {
+            ref: 'Service',
+            localField: '_id',
+            foreignField: 'user',
+          });
           return schema;
         },
       },
