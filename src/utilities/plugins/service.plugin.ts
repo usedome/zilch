@@ -1,11 +1,12 @@
 import { Schema } from 'mongoose';
 
 export const servicePlugin = (schema: Schema) => {
-  schema.pre(['findOne'], async function () {
+  schema.pre(['findOne', 'find'], async function () {
     this.populate('user');
+    this.populate('resources');
   });
 
-  schema.post('save', async function () {
+  schema.post('find', async function () {
     this.populate('user');
   });
 };

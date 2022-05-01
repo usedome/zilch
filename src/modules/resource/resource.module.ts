@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { resourcePlugin, uuidPlugin } from 'src/utilities';
 import { Resource, ResourceSchema } from './resource.schema';
@@ -8,7 +8,7 @@ import { ServiceModule } from '../service/service.module';
 
 @Module({
   imports: [
-    ServiceModule,
+    forwardRef(() => ServiceModule),
     MongooseModule.forFeatureAsync([
       {
         name: Resource.name,
