@@ -12,10 +12,10 @@ export class UpdateUserPipe implements PipeTransform {
   ) {}
 
   async transform(value: UpdateUserDto) {
-    if (!value.active_service) return value;
+    if (!value.default_service) return value;
 
     const service = await this.serviceService.findOne({
-      uuid: value.active_service,
+      uuid: value.default_service,
     });
 
     const { user } = this.request;
@@ -32,6 +32,6 @@ export class UpdateUserPipe implements PipeTransform {
       );
     }
 
-    return value;
+    return { ...value, default_service: service._id };
   }
 }

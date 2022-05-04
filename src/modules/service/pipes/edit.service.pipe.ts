@@ -14,7 +14,8 @@ export class EditServicePipe implements PipeTransform {
   ) {}
 
   async transform(value: CreateServiceDto) {
-    value.name = value.name.toLowerCase();
+    value.name =
+      value.name.charAt(0).toUpperCase() + value.name.slice(1).toLowerCase();
     const service = await this.serviceService.findOne({
       name: value.name,
       user: this.request.user._id,

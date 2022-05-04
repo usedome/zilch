@@ -1,4 +1,5 @@
 import { SchemaFactory, Schema, Prop } from '@nestjs/mongoose';
+import { IsString } from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Service } from '../service/service.schema';
 
@@ -23,7 +24,8 @@ export class User {
   avatar: string;
 
   @Prop({ type: String })
-  active_service?: string;
+  @IsString()
+  default_service?: string;
 
   services: Service[];
 }

@@ -34,8 +34,8 @@ export class ServiceController {
   ) {
     const { user } = req;
     const service = await this.serviceService.create({ ...dto }, user._id);
-    if (!user.active_service) {
-      await this.userService.update(user, { active_service: service._id });
+    if (!user.default_service) {
+      await this.userService.update(user, { default_service: service._id });
     }
     res.status(201).json({ service, message: 'service created successfully' });
   }
