@@ -6,6 +6,7 @@ import { Service } from 'src/modules/service/service.schema';
 export class CreateResourceDto extends PickType(Resource, [
   'name',
   'description',
+  'is_active',
 ] as const) {}
 
 export class UpdateResourceDto extends PartialType(CreateResourceDto) {}

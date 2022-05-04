@@ -5,6 +5,13 @@ import { User } from '../user/user.schema';
 
 export type ServiceDocument = Service & Document;
 
+class ServiceApiKey {
+  name: string;
+  uuid: string;
+  key: string;
+  last_used: Date | null;
+}
+
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
@@ -25,6 +32,9 @@ export class Service {
   @IsString()
   @Prop({ type: String })
   description?: string;
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  api_keys: ServiceApiKey[];
 }
 
 export const ServiceSchema = SchemaFactory.createForClass(Service);

@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform, Inject, HttpStatus } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { handleException } from 'src/utilities';
+import { capitalize, handleException } from 'src/utilities';
 import { CreateServiceDto } from '../dto';
 import { ServiceService } from '../service.service';
 import { HydratedDocument } from 'mongoose';
@@ -14,8 +14,7 @@ export class EditServicePipe implements PipeTransform {
   ) {}
 
   async transform(value: CreateServiceDto) {
-    value.name =
-      value.name.charAt(0).toUpperCase() + value.name.slice(1).toLowerCase();
+    value.name = capitalize(value.name);
     const service = await this.serviceService.findOne({
       name: value.name,
       user: this.request.user._id,

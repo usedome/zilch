@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { v4 as uuidv4 } from 'uuid';
 import { Service, ServiceDocument } from './service.schema';
 import { Model, HydratedDocument } from 'mongoose';
 import { CreateServiceDto, UpdateServiceDto } from './dto';
+import { capitalize, generateApiKey } from 'src/utilities';
 
 @Injectable()
 export class ServiceService {
@@ -11,7 +13,7 @@ export class ServiceService {
   ) {}
 
   async create(dto: CreateServiceDto, user: string) {
-    return await this.service.create({ ...dto, user });
+    return await this.service.create({ ...dto, api_keys: [], user });
   }
 
   async findOne(filter: { [key: string]: string }) {
@@ -43,6 +45,26 @@ export class ServiceService {
     Object.entries(dto).forEach(([key, value]) => {
       service[key] = value;
     });
+    await service.save();
+    return service;
+  }
+
+  async createApiKey(service: HydratedDocument<Service>, name: string) {
+    const newApiKey = {
+      name: capitalize(name),
+      uuid: uuidv4(),
+      key: generateApiKey(),
+      last_used: null,
+    };
+    service.api_keys = [...(service.api_keys ?? []), newApiKey];
+    await service.save();
+    return service;
+  }
+
+  async deleteApiKey(service: HydratedDocument<Service>, api_key_uuid: string) {
+    service.api_keys = service.api_keys.filter(
+      ({ uuid }) => uuid != api_key_uuid,
+    );
     await service.save();
     return service;
   }

@@ -1,5 +1,5 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import { IsDefined, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsString } from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Service } from '../service/service.schema';
 
@@ -23,6 +23,10 @@ export class Resource {
   @IsString()
   @Prop({ type: String })
   description?: string;
+
+  @IsBoolean()
+  @Prop({ type: Boolean })
+  is_active: boolean;
 }
 
 export const ResourceSchema = SchemaFactory.createForClass(Resource);

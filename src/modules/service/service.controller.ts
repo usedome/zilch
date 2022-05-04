@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -11,7 +12,7 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { CreateServiceDto, UpdateServiceDto } from './dto';
+import { CreateApiKeyDto, CreateServiceDto, UpdateServiceDto } from './dto';
 import { EditServicePipe } from './pipes';
 import { ServiceByUuidPipe } from './pipes/service.by.uuid.pipe';
 import { ServiceService } from './service.service';
@@ -69,5 +70,29 @@ export class ServiceController {
   ) {
     const updatedService = await this.serviceService.update(service, body);
     return { service: updatedService, message: 'service updated successfully' };
+  }
+
+  @Post('/:uuid/api-keys')
+  async createApiKey(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Body() body: CreateApiKeyDto,
+    @Res({ passthrough: true }) res,
+  ) {
+    const updatedService = await this.serviceService.createApiKey(
+      service,
+      body.name,
+    );
+    const apiKey = updatedService.api_keys[updatedService.api_keys.length - 1];
+    res.status(201).json({ apiKey, message: 'API Key created successfully' });
+  }
+
+  @Delete('/:uuid/api-keys/:api_key_uuid')
+  async deleteApiKey(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Param('api_key_uuid') api_key_uuid: string,
+    @Res({ passthrough: true }) res,
+  ) {
+    await this.serviceService.deleteApiKey(service, api_key_uuid);
+    res.status(204);
   }
 }
