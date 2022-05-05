@@ -11,11 +11,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { Service } from '../service/service.schema';
-import {
-  CreateResourceDto,
-  EditResourcePipeDto,
-  UpdateResourceDto,
-} from './dto';
+import { CreateResourceDto } from './dto';
 import { EditResourcePipe } from './pipes';
 import { HydratedDocument } from 'mongoose';
 import { ResourceService } from './resource.service';

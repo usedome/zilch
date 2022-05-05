@@ -102,6 +102,6 @@ export class EditResourcePipe implements PipeTransform {
         );
       }
     }
-    return { body: value, service, resource };
+    return { body: value, service, resource: resourceToUpdate };
   }
 }
