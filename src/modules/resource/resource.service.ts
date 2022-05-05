@@ -18,11 +18,8 @@ export class ResourceService {
     return resource;
   }
 
-  async find(filter: { [key: string]: string }, cb?: any) {
-    if (!cb) return await this.resource.find({ ...filter });
-    return this.resource.find({ ...filter }, function (err, resources) {
-      cb(resources);
-    });
+  async find(filter: { [key: string]: string }) {
+    return await this.resource.find({ ...filter }).sort({ created_at: -1 });
   }
 
   async findOne(filter: { [key: string]: string }) {
