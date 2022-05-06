@@ -1,11 +1,22 @@
-import { Controller, Get, Put, Req, Body } from '@nestjs/common';
-import { UpdateUserDto } from './dto';
-import { UpdateUserPipe } from './pipes';
+import { Controller, Get, Put, Req, Body, Post, Res } from '@nestjs/common';
+import { UnguardedAuthRoute } from 'src/utilities';
+import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserPipe, UpdateUserPipe } from './pipes';
 import { UserService } from './user.service';
 
 @Controller('/me')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @UnguardedAuthRoute()
+  @Post()
+  async createMe(
+    @Res({ passthrough: true }) res,
+    @Body(CreateUserPipe) body: CreateUserDto,
+  ) {
+    const user = await this.userService.create(body);
+    res.status(201).json({ user, message: 'user created successfully' });
+  }
 
   @Get()
   async getMe(@Req() req) {
