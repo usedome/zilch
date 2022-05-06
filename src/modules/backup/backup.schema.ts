@@ -24,9 +24,8 @@ export class Backup {
   @Prop({
     type: MongooseSchema.Types.Mixed,
     required: true,
-    set: (value) => JSON.parse(value),
   })
-  value: { [key: string]: any };
+  value: any;
 }
 
 export const BackupSchema = SchemaFactory.createForClass(Backup);

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
 
-export const IS_GUARDED_KEY = 'unguarded';
+export const IS_AUTH_GUARDED_KEY = 'unguardedAuth';
 
-export const UnguardedRoute = () => SetMetadata(IS_GUARDED_KEY, true);
+export const UnguardedAuthRoute = () => SetMetadata(IS_AUTH_GUARDED_KEY, true);

@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { IS_GUARDED_KEY } from 'src/utilities';
+import { IS_AUTH_GUARDED_KEY } from 'src/utilities';
 
 @Injectable()
 export class TokenGuard extends AuthGuard('jwt') {
@@ -11,7 +11,7 @@ export class TokenGuard extends AuthGuard('jwt') {
 
   canActivate(context: ExecutionContext) {
     const unguarded = this.reflector.getAllAndOverride<boolean>(
-      IS_GUARDED_KEY,
+      IS_AUTH_GUARDED_KEY,
       [context.getHandler(), context.getClass()],
     );
 

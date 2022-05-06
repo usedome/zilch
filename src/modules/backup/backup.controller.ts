@@ -2,6 +2,7 @@ import {
   Controller,
   Param,
   Post,
+  Req,
   Res,
   Body,
   Get,
@@ -16,18 +17,20 @@ import { CreateBackupDto } from './dto';
 import { ResourceByUuidPipe } from '../resource/pipes/resource.by.uuid.pipe';
 import { BackupByUuidPipe } from './pipes';
 import { Backup } from './backup.schema';
+import { UnguardedAuthRoute } from 'src/utilities';
 
 @Controller('/resources/:resource_uuid/backups')
 export class BackupController {
   constructor(private backupService: BackupService) {}
 
+  @UnguardedAuthRoute()
   @Post()
   async create(
-    @Param('resource_uuid', ResourceByUuidPipe)
-    resource: HydratedDocument<Resource>,
+    @Req() req,
     @Res({ passthrough: true }) res,
     @Body() body: CreateBackupDto,
   ) {
+    const { resource } = req;
     const backup = await this.backupService.create(
       { ...body },
       String(resource._id),
@@ -35,26 +38,26 @@ export class BackupController {
     res.status(201).json({ backup, message: 'backup created successfully' });
   }
 
-  @Get()
-  async get(
-    @Param('resource_uuid', ResourceByUuidPipe)
-    resource: HydratedDocument<Resource>,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('count', new DefaultValuePipe(8), ParseIntPipe) count: number,
-  ) {
-    const { backups, pagination } = await this.backupService.get(
-      { resource: String(resource._id) },
-      page,
-      count,
-    );
+  // @Get()
+  // async get(
+  //   @Param('resource_uuid', ResourceByUuidPipe)
+  //   resource: HydratedDocument<Resource>,
+  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  //   @Query('count', new DefaultValuePipe(8), ParseIntPipe) count: number,
+  // ) {
+  //   const { backups, pagination } = await this.backupService.get(
+  //     { resource: String(resource._id) },
+  //     page,
+  //     count,
+  //   );
 
-    return { backups, pagination, message: 'backups fetched successfully' };
-  }
+  //   return { backups, pagination, message: 'backups fetched successfully' };
+  // }
 
-  @Get('/:backup_uuid')
-  async getOne(
-    @Param('backup_uuid', BackupByUuidPipe) backup: HydratedDocument<Backup>,
-  ) {
-    return { backup, message: 'backup fetched successfully' };
-  }
+  // @Get('/:backup_uuid')
+  // async getOne(
+  //   @Param('backup_uuid', BackupByUuidPipe) backup: HydratedDocument<Backup>,
+  // ) {
+  //   return { backup, message: 'backup fetched successfully' };
+  // }
 }
