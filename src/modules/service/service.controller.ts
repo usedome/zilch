@@ -12,7 +12,12 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { CreateApiKeyDto, CreateServiceDto, UpdateServiceDto } from './dto';
+import {
+  CreateApiKeyDto,
+  CreateIpAddressDto,
+  CreateServiceDto,
+  UpdateServiceDto,
+} from './dto';
 import { EditServicePipe } from './pipes';
 import { ServiceByUuidPipe } from './pipes/service.by.uuid.pipe';
 import { ServiceService } from './service.service';
@@ -93,6 +98,30 @@ export class ServiceController {
     @Res({ passthrough: true }) res,
   ) {
     await this.serviceService.deleteApiKey(service, api_key_uuid);
+    res.status(204);
+  }
+
+  @Post('/:uuid/ips')
+  async addIpAddress(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Body() body: CreateIpAddressDto,
+    @Res({ passthrough: true }) res,
+  ) {
+    const updatedService = await this.serviceService.createIpAddress(
+      service,
+      body.value,
+    );
+    const ip = updatedService.ips[service.ips.length - 1];
+    res.status(201).json({ ip, message: 'ip address created successfully' });
+  }
+
+  @Delete('/:uuid/ips/:ip_address_uuid')
+  async deleteIpAddress(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Param('ip_address_uuid') ip_address_uuid: string,
+    @Res({ passthrough: true }) res,
+  ) {
+    await this.serviceService.deleteIpAddress(service, ip_address_uuid);
     res.status(204);
   }
 }

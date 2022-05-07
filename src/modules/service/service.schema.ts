@@ -12,6 +12,11 @@ class ServiceApiKey {
   last_used: Date | null;
 }
 
+class ServiceIpAddress {
+  uuid: string;
+  value: string;
+}
+
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
@@ -35,6 +40,9 @@ export class Service {
 
   @Prop({ type: MongooseSchema.Types.Mixed })
   api_keys: ServiceApiKey[];
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  ips: ServiceIpAddress[];
 }
 
 export const ServiceSchema = SchemaFactory.createForClass(Service);

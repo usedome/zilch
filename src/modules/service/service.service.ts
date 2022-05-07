@@ -13,7 +13,7 @@ export class ServiceService {
   ) {}
 
   async create(dto: CreateServiceDto, user: string) {
-    return await this.service.create({ ...dto, api_keys: [], user });
+    return await this.service.create({ ...dto, api_keys: [], ips: [], user });
   }
 
   async findOne(filter: { [key: string]: string }) {
@@ -64,6 +64,24 @@ export class ServiceService {
   async deleteApiKey(service: HydratedDocument<Service>, api_key_uuid: string) {
     service.api_keys = service.api_keys.filter(
       ({ uuid }) => uuid != api_key_uuid,
+    );
+    await service.save();
+    return service;
+  }
+
+  async createIpAddress(service: HydratedDocument<Service>, value: string) {
+    const newIpAddress = { uuid: uuidv4(), value };
+    service.ips = [...(service.ips ?? []), newIpAddress];
+    await service.save();
+    return service;
+  }
+
+  async deleteIpAddress(
+    service: HydratedDocument<Service>,
+    ip_address_uuid: string,
+  ) {
+    service.ips = (service.ips ?? []).filter(
+      ({ uuid }) => uuid !== ip_address_uuid,
     );
     await service.save();
     return service;

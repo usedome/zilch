@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable, PipeTransform, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { HydratedDocument } from 'mongoose';
-import { capitalize, handleException, servicePlugin } from 'src/utilities';
+import { capitalize, handleException } from 'src/utilities';
 import { Service } from '../service.schema';
 import { ServiceService } from '../service.service';
 
@@ -22,8 +22,11 @@ export class ServiceByUuidPipe implements PipeTransform {
       handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
     }
 
-    if (this.request.url.toLowerCase().includes('api-keys'))
-      return this.validateApiKey(service);
+    const url = this.request.url.toLowerCase();
+
+    if (url.includes('api-keys')) return this.validateApiKey(service);
+
+    if (url.includes('ips')) return this.validateIpAddress(service);
 
     return service;
   }
@@ -55,6 +58,39 @@ export class ServiceByUuidPipe implements PipeTransform {
       HttpStatus.NOT_FOUND,
       'service-005',
       `api key does not exist for service ${service.name}`,
+    );
+  }
+
+  validateIpAddress(service: HydratedDocument<Service>) {
+    const {
+      body: { value },
+      params: { ip_address_uuid },
+      method,
+    } = this.request;
+
+    if (method.toLowerCase() === 'post') {
+      if (
+        service.ips &&
+        service.ips.map(({ value: ipValue }) => ipValue).includes(value)
+      )
+        handleException(
+          HttpStatus.BAD_REQUEST,
+          'service-006',
+          `ip address with value ${value} is already registered for service ${service.name}`,
+        );
+      return service;
+    }
+
+    if (
+      service.ips &&
+      service.ips.map(({ uuid }) => uuid).includes(ip_address_uuid)
+    )
+      return service;
+
+    handleException(
+      HttpStatus.NOT_FOUND,
+      'service-007',
+      `ip address with uuid ${ip_address_uuid} does not exist for service ${service.name}`,
     );
   }
 }
