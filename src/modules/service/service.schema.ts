@@ -38,6 +38,11 @@ export class Service {
   @Prop({ type: String })
   description?: string;
 
+  @IsDefined()
+  @IsString()
+  @Prop({ type: String })
+  backup_duration: string;
+
   @Prop({ type: MongooseSchema.Types.Mixed })
   api_keys: ServiceApiKey[];
 
