@@ -24,7 +24,7 @@ export class User {
   @IsEmail()
   email: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   @IsString()
   @IsDefined()
   @MinLength(8)
