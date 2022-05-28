@@ -37,7 +37,7 @@ export class ServiceByUuidPipe implements PipeTransform {
       params: { api_key_uuid },
       method,
     } = this.request;
-    const parsedName = capitalize(name);
+    const parsedName = capitalize(name ?? '');
     if (method.toLowerCase() === 'post') {
       if (
         !service.api_keys ||
