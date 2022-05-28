@@ -8,7 +8,7 @@ RUN rm -rf dist
 
 COPY package*.json ./
 
-RUN yarn add glob rimraf
+RUN yarn add glob rimraf @nestjs/cli
 
 RUN yarn install
 
