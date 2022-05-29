@@ -19,6 +19,7 @@ class ServiceIpAddress {
 
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  toJSON: { getters: true },
 })
 export class Service {
   _id: MongooseSchema.Types.ObjectId;
@@ -43,10 +44,24 @@ export class Service {
   @Prop({ type: String })
   backup_duration: string;
 
-  @Prop({ type: MongooseSchema.Types.Mixed })
+  @Prop({
+    type: MongooseSchema.Types.Mixed,
+    get: (api_keys) => {
+      if (!api_keys) return [];
+      api_keys.reverse();
+      return api_keys;
+    },
+  })
   api_keys: ServiceApiKey[];
 
-  @Prop({ type: MongooseSchema.Types.Mixed })
+  @Prop({
+    type: MongooseSchema.Types.Mixed,
+    get: (ips) => {
+      if (!ips) return [];
+      ips.reverse();
+      return ips;
+    },
+  })
   ips: ServiceIpAddress[];
 }
 
