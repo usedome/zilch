@@ -17,6 +17,12 @@ class ServiceIpAddress {
   value: string;
 }
 
+class ServiceNotification {
+  BACKUP_REQUEST_WRONG_CREDENTIALS: boolean;
+  BACKUP_REQUEST_UNAUTHORIZED_IP: boolean;
+  BACKUP_REQUEST_SUCCESS: boolean;
+}
+
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   toJSON: { getters: true },
@@ -39,9 +45,7 @@ export class Service {
   @Prop({ type: String })
   description?: string;
 
-  @IsDefined()
-  @IsString()
-  @Prop({ type: String })
+  @Prop({ type: String, default: '1w' })
   backup_duration: string;
 
   @Prop({
@@ -63,6 +67,9 @@ export class Service {
     },
   })
   ips: ServiceIpAddress[];
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  notifications: ServiceNotification;
 }
 
 export const ServiceSchema = SchemaFactory.createForClass(Service);
