@@ -38,4 +38,8 @@ export class BackupService {
     const maxPages = Math.ceil(total / limit);
     return { currentPage: page, maxPages };
   }
+
+  async deleteBackups(filter: { [key: string]: string }) {
+    await this.backup.deleteMany({ ...filter });
+  }
 }

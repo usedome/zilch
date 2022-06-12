@@ -4,6 +4,7 @@ import {
   Post,
   Get,
   Res,
+  Delete,
   Param,
   DefaultValuePipe,
   ParseIntPipe,
@@ -70,5 +71,15 @@ export class ResourceController {
       resource: updatedResource,
       message: 'resource updated successfully',
     };
+  }
+
+  @Delete('/:resource_uuid')
+  async deleteResource(
+    @Param('resource_uuid', ResourceByUuidPipe)
+    resource: HydratedDocument<Resource>,
+    @Res({ passthrough: true }) res,
+  ) {
+    await resource.delete();
+    res.status(204);
   }
 }

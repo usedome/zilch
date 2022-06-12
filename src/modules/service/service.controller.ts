@@ -16,6 +16,7 @@ import {
   CreateApiKeyDto,
   CreateIpAddressDto,
   CreateServiceDto,
+  UpdateNotificationDto,
   UpdateServiceDto,
 } from './dto';
 import { EditServicePipe } from './pipes';
@@ -123,5 +124,20 @@ export class ServiceController {
   ) {
     await this.serviceService.deleteIpAddress(service, ip_address_uuid);
     res.status(204);
+  }
+
+  @Put('/:uuid/notifications')
+  async updateNotifications(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Body() body: UpdateNotificationDto,
+  ) {
+    const updatedService = await this.serviceService.updateNotifications(
+      service,
+      body,
+    );
+    return {
+      notifications: updatedService.notifications,
+      message: 'service notifications updated successfully',
+    };
   }
 }

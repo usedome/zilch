@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import { Service, ServiceDocument } from './service.schema';
 import { Model, HydratedDocument } from 'mongoose';
-import { CreateServiceDto, UpdateServiceDto } from './dto';
+import {
+  CreateServiceDto,
+  UpdateNotificationDto,
+  UpdateServiceDto,
+} from './dto';
 import { capitalize, generateApiKey } from 'src/utilities';
 
 @Injectable()
@@ -13,7 +17,7 @@ export class ServiceService {
   ) {}
 
   async create(dto: CreateServiceDto, user: string) {
-    return await this.service.create({ ...dto, api_keys: [], ips: [], user });
+    return await this.service.create({ ...dto, user });
   }
 
   async findOne(filter: { [key: string]: string }) {
@@ -83,6 +87,36 @@ export class ServiceService {
     service.ips = (service.ips ?? []).filter(
       ({ uuid }) => uuid !== ip_address_uuid,
     );
+    await service.save();
+    return service;
+  }
+
+  async updateNotifications(
+    service: HydratedDocument<Service>,
+    body: UpdateNotificationDto,
+  ) {
+    const [key, subKey] = body.key.split('.');
+    const notifications = service.notifications;
+
+    if (key === 'channel') {
+      if (!body.value) {
+        const idx = notifications.channels.findIndex(
+          (channel) => channel.toUpperCase() === subKey.toUpperCase(),
+        );
+        if (idx === -1) return service;
+        notifications.channels.splice(idx, 1);
+      } else notifications.channels.push(subKey.toUpperCase());
+      service.notifications = {
+        ...notifications,
+        channels: [...new Set(notifications.channels)],
+      };
+    } else {
+      service.notifications = {
+        ...notifications,
+        events: { ...notifications.events, [subKey]: body.value },
+      };
+    }
+
     await service.save();
     return service;
   }

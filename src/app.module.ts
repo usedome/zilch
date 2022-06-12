@@ -17,9 +17,9 @@ import { TokenModule } from './modules/token/token.module';
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
         const { DB_USERNAME, DB_PASSWORD, DB_URL, DB_NAME } =
-        configService.getAll();
-      const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_URL}/${DB_NAME}?retryWrites=true&w=majority`;
-      return { uri };
+          configService.getAll();
+        const uri = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_URL}/${DB_NAME}?retryWrites=true&w=majority`;
+        return { uri };
       },
       imports: [ConfigModule],
       inject: [ConfigService],

@@ -18,9 +18,8 @@ class ServiceIpAddress {
 }
 
 class ServiceNotification {
-  BACKUP_REQUEST_WRONG_CREDENTIALS: boolean;
-  BACKUP_REQUEST_UNAUTHORIZED_IP: boolean;
-  BACKUP_REQUEST_SUCCESS: boolean;
+  channels: string[];
+  events: { [key: string]: boolean };
 }
 
 @Schema({
@@ -55,6 +54,7 @@ export class Service {
       api_keys.reverse();
       return api_keys;
     },
+    default: [],
   })
   api_keys: ServiceApiKey[];
 
@@ -65,10 +65,21 @@ export class Service {
       ips.reverse();
       return ips;
     },
+    default: [],
   })
   ips: ServiceIpAddress[];
 
-  @Prop({ type: MongooseSchema.Types.Mixed })
+  @Prop({
+    type: MongooseSchema.Types.Mixed,
+    default: () => ({
+      channels: ['EMAIL'],
+      events: {
+        BR_WRONG_CREDENTIALS: true,
+        BR_UNAUTHORIZED_IP: true,
+        BR_SUCCESSFUL: true,
+      },
+    }),
+  })
   notifications: ServiceNotification;
 }
 
