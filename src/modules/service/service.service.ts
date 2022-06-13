@@ -113,7 +113,7 @@ export class ServiceService {
     } else {
       service.notifications = {
         ...notifications,
-        events: { ...notifications.events, [subKey]: body.value },
+        events: { ...notifications.events, [subKey.toUpperCase()]: body.value },
       };
     }
 
