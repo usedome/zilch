@@ -1,12 +1,16 @@
 import { Controller, Get, Put, Req, Body, Post, Res } from '@nestjs/common';
 import { UnguardedAuthRoute } from 'src/utilities';
+import { EventEmitter2 } from 'eventemitter2';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { CreateUserPipe, UpdateUserPipe } from './pipes';
 import { UserService } from './user.service';
 
 @Controller('/me')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @UnguardedAuthRoute()
   @Post()

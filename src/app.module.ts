@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule } from './modules/config/config.module';
 import { ConfigService } from './modules/config/config.service';
 import { UserModule } from './modules/user/user.module';
@@ -10,6 +11,7 @@ import { BackupModule } from './modules/backup/backup.module';
 import { ResourceModule } from './modules/resource/resource.module';
 import { AccountModule } from './modules/account/account.module';
 import { TokenModule } from './modules/token/token.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -24,12 +26,16 @@ import { TokenModule } from './modules/token/token.module';
       imports: [ConfigModule],
       inject: [ConfigService],
     }),
+    EventEmitterModule.forRoot({
+      delimiter: '.',
+    }),
     UserModule,
     ServiceModule,
     BackupModule,
     ResourceModule,
     AccountModule,
     TokenModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

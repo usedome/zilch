@@ -24,6 +24,9 @@ export class User {
   @IsEmail()
   email: string;
 
+  @Prop({ type: Date })
+  email_verified_at?: Date;
+
   @Prop({ type: String })
   @IsString()
   @IsDefined()
@@ -32,9 +35,6 @@ export class User {
 
   @Prop({ type: String })
   avatar?: string;
-
-  @Prop({ type: Date })
-  email_verified_at?: Date;
 
   @Prop({ type: String })
   @IsString()
