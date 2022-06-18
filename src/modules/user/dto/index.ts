@@ -16,3 +16,7 @@ export class UpdateUserDto extends PartialType(
 ) {
   avatar?: File | string;
 }
+
+export class ResetPasswordDto extends PickType(User, ['email'] as const) {}
+
+export class ChangePasswordDto extends PickType(User, ['password'] as const) {}

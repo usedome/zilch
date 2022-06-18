@@ -26,6 +26,14 @@ export class MailService {
     await this.mail(mailParams, 'user.registered.ejs', { user });
   }
 
+  async handleUserResetPasswordEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: 'Backmeup: Reset Your Password',
+    };
+    await this.mail(mailParams, 'user.reset.password.ejs', { user });
+  }
+
   async mail(
     mailParams: { [key: string]: string },
     template: string,

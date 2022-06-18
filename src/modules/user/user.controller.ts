@@ -11,10 +11,15 @@ import {
 import { generateRandomToken, UnguardedAuthRoute } from 'src/utilities';
 import { EventEmitter2 } from 'eventemitter2';
 import { HydratedDocument } from 'mongoose';
-import { CreateUserDto, UpdateUserDto } from './dto';
-import { CreateUserPipe, UpdateUserPipe, VerifyUserPipe } from './pipes';
+import { CreateUserDto, ResetPasswordDto, UpdateUserDto } from './dto';
+import {
+  CreateUserPipe,
+  ResetPasswordPipe,
+  UpdateUserPipe,
+  VerifyUserPipe,
+} from './pipes';
 import { UserService } from './user.service';
-import { UserRegisteredEvent } from './events';
+import { UserRegisteredEvent, UserResetPasswordEvent } from './events';
 import { TokenService } from '../token/token.service';
 import { User } from './user.schema';
 
@@ -72,5 +77,21 @@ export class UserController {
       user: updatedUser,
       message: 'user updated successfully',
     };
+  }
+
+  @UnguardedAuthRoute()
+  @Post('/password/reset')
+  async resetPassword(@Body(ResetPasswordPipe) dto: ResetPasswordDto) {
+    const user = await this.userService.findOne({ email: dto.email });
+    user.password_reset = {
+      token: generateRandomToken(60),
+      expires_in: Date.now() + 15 * 60 * 60 * 1000,
+    };
+    await user.save();
+    this.eventEmitter.emit(
+      'user.reset.password',
+      new UserResetPasswordEvent(user),
+    );
+    return { message: 'Password reset email sent successfully' };
   }
 }

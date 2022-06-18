@@ -1,9 +1,20 @@
 import { SchemaFactory, Schema, Prop } from '@nestjs/mongoose';
-import { IsDefined, IsString, MinLength, IsEmail } from 'class-validator';
+import {
+  IsDefined,
+  IsString,
+  MinLength,
+  IsEmail,
+  isDefined,
+} from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Service } from '../service/service.schema';
 
 export type UserDocument = User & Document;
+
+class UserResetPassword {
+  token: string;
+  expires_in: number;
+}
 
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
@@ -11,6 +22,7 @@ export type UserDocument = User & Document;
     virtuals: true,
     transform: (_, user) => {
       delete user['password'];
+      delete user['password_reset'];
       return user;
     },
   },
@@ -27,6 +39,7 @@ export class User {
   name: string;
 
   @Prop({ type: String, unique: true, required: true })
+  @IsDefined()
   @IsEmail()
   email: string;
 
@@ -38,6 +51,9 @@ export class User {
   @IsDefined()
   @MinLength(8)
   password: string;
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  password_reset?: UserResetPassword;
 
   @Prop({ type: String })
   avatar?: string;

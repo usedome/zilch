@@ -1,9 +1,2 @@
-import { HydratedDocument } from 'mongoose';
-import { User } from '../user.schema';
-export class UserRegisteredEvent {
-  user: HydratedDocument<User>;
-
-  constructor(user: HydratedDocument<User>) {
-    this.user = user;
-  }
-}
+export * from './user.registered.event';
+export * from './user.reset.password.event';
