@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable, PipeTransform, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { HydratedDocument } from 'mongoose';
-import { capitalize, handleException } from 'src/utilities';
+import { capitalize, throwException } from 'src/utilities';
 import { Service } from '../service.schema';
 import { ServiceService } from '../service.service';
 
@@ -19,7 +19,7 @@ export class ServiceByUuidPipe implements PipeTransform {
     });
 
     if (!service) {
-      handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
+      throwException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
     }
 
     const url = this.request.url.toLowerCase();
@@ -44,7 +44,7 @@ export class ServiceByUuidPipe implements PipeTransform {
         !service.api_keys.map(({ name }) => name).includes(parsedName)
       )
         return service;
-      handleException(
+      throwException(
         HttpStatus.BAD_REQUEST,
         'service-004',
         `api key with name ${name} exists for service ${service.name} already`,
@@ -54,7 +54,7 @@ export class ServiceByUuidPipe implements PipeTransform {
     if (service.api_keys.map(({ uuid }) => uuid).includes(api_key_uuid))
       return service;
 
-    handleException(
+    throwException(
       HttpStatus.NOT_FOUND,
       'service-005',
       `api key does not exist for service ${service.name}`,
@@ -73,7 +73,7 @@ export class ServiceByUuidPipe implements PipeTransform {
         service.ips &&
         service.ips.map(({ value: ipValue }) => ipValue).includes(value)
       )
-        handleException(
+        throwException(
           HttpStatus.BAD_REQUEST,
           'service-006',
           `ip address with value ${value} is already registered for service ${service.name}`,
@@ -87,7 +87,7 @@ export class ServiceByUuidPipe implements PipeTransform {
     )
       return service;
 
-    handleException(
+    throwException(
       HttpStatus.NOT_FOUND,
       'service-007',
       `ip address with uuid ${ip_address_uuid} does not exist for service ${service.name}`,

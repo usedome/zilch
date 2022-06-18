@@ -1,7 +1,7 @@
 import { Injectable, PipeTransform, HttpStatus, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ServiceService } from 'src/modules/service/service.service';
-import { handleException } from 'src/utilities';
+import { throwException } from 'src/utilities';
 import {
   CreateResourceDto,
   EditResourcePipeDto,
@@ -30,7 +30,7 @@ export class EditResourcePipe implements PipeTransform {
     });
 
     if (!service) {
-      handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
+      throwException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
     }
 
     let resource;
@@ -69,7 +69,7 @@ export class EditResourcePipe implements PipeTransform {
     resource?: HydratedDocument<Resource>,
   ) {
     if (resource) {
-      handleException(
+      throwException(
         HttpStatus.BAD_REQUEST,
         'resource-003',
         `resource with ${value.name} name exists already for ${service.name} service`,
@@ -86,7 +86,7 @@ export class EditResourcePipe implements PipeTransform {
     resource?: HydratedDocument<Resource>,
   ) {
     if (!resourceToUpdate) {
-      handleException(
+      throwException(
         HttpStatus.NOT_FOUND,
         'resource-001',
         `resource does not exist`,
@@ -95,7 +95,7 @@ export class EditResourcePipe implements PipeTransform {
 
     if (value.name) {
       if (resource && resource.uuid !== this.request.params.resource_uuid) {
-        handleException(
+        throwException(
           HttpStatus.BAD_REQUEST,
           'resource-003',
           `resource with ${value.name} name exists already for ${service.name} service`,

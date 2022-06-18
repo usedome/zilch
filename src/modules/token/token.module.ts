@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '../config/config.module';
@@ -22,7 +22,7 @@ import { TokenStrategy } from './token.strategy';
       imports: [ConfigModule],
     }),
     ConfigModule,
-    UserModule,
+    forwardRef(() => UserModule),
   ],
   controllers: [TokenController],
   providers: [
@@ -30,5 +30,6 @@ import { TokenStrategy } from './token.strategy';
     TokenStrategy,
     { provide: APP_GUARD, useClass: TokenGuard },
   ],
+  exports: [TokenService],
 })
 export class TokenModule {}

@@ -11,14 +11,14 @@ export class MailService {
   private mailClient;
 
   constructor(private configService: ConfigService) {
-    const mailgun = new (Mailgun as any)(formData);
+    const mailgun = new Mailgun(formData);
     this.mailClient = mailgun.client({
       username: 'api',
       key: this.configService.get('MAILGUN_API_KEY'),
     });
   }
 
-  async handleUserRegistered(user: User) {
+  async handleUserRegisteredEvent(user: User) {
     const mailParams = {
       to: user.email,
       subject: 'Backmeup: Verify Your Email',
@@ -26,18 +26,21 @@ export class MailService {
     await this.mail(mailParams, 'user.registered.ejs', { user });
   }
 
-  mail(
+  async mail(
     mailParams: { [key: string]: string },
     template: string,
     templateParams: { [key: string]: any },
   ) {
     const templatePath = this.generateTemplatePath(template);
     const params = this.generateTemplateParams(templateParams);
-    renderFile(templatePath, params, (error, html) => {
+    renderFile(templatePath, params, async (error, html) => {
       if (error) throw error;
       mailParams.from = this.configService.get('MAIL_FROM');
       mailParams.html = html;
-      this.mailClient.create(this.configService.get('MAIL_DOMAIN'), mailParams);
+      await this.mailClient.messages.create(
+        this.configService.get('MAIL_DOMAIN'),
+        mailParams,
+      );
     });
   }
 

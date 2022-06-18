@@ -7,7 +7,13 @@ export type UserDocument = User & Document;
 
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
-  toJSON: { virtuals: true },
+  toJSON: {
+    virtuals: true,
+    transform: (_, user) => {
+      delete user['password'];
+      return user;
+    },
+  },
 })
 export class User {
   _id: MongooseSchema.Types.ObjectId;
@@ -23,9 +29,6 @@ export class User {
   @Prop({ type: String, unique: true, required: true })
   @IsEmail()
   email: string;
-
-  @Prop({ type: Date })
-  email_verified_at?: Date;
 
   @Prop({ type: String })
   email_verification_token?: String;

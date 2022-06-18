@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common';
-import { handleException } from 'src/utilities';
+import { throwException } from 'src/utilities';
 import { CreateUserDto } from '../dto';
 import { UserService } from '../user.service';
 
@@ -12,7 +12,7 @@ export class CreateUserPipe implements PipeTransform {
     const user = await this.userService.findOne({ email });
 
     if (user) {
-      handleException(
+      throwException(
         HttpStatus.BAD_REQUEST,
         'user-003',
         `user with email ${email} exists already`,

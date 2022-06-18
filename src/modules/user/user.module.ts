@@ -5,6 +5,9 @@ import { User, UserSchema } from './user.schema';
 import { userPlugin, uuidPlugin } from 'src/utilities';
 import { UserController } from './user.controller';
 import { ServiceModule } from '../service/service.module';
+import { MailModule } from '../mail/mail.module';
+import { UserRegisteredListener } from './listeners';
+import { TokenModule } from '../token/token.module';
 
 @Module({
   imports: [
@@ -25,8 +28,10 @@ import { ServiceModule } from '../service/service.module';
       },
     ]),
     forwardRef(() => ServiceModule),
+    forwardRef(() => TokenModule),
+    MailModule,
   ],
-  providers: [UserService],
+  providers: [UserService, UserRegisteredListener],
   exports: [UserService],
   controllers: [UserController],
 })

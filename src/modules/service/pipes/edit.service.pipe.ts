@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform, Inject, HttpStatus } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { capitalize, handleException } from 'src/utilities';
+import { capitalize, throwException } from 'src/utilities';
 import { CreateServiceDto } from '../dto';
 import { ServiceService } from '../service.service';
 import { HydratedDocument } from 'mongoose';
@@ -31,7 +31,7 @@ export class EditServicePipe implements PipeTransform {
     service?: HydratedDocument<Service>,
   ) {
     if (service) {
-      handleException(
+      throwException(
         HttpStatus.BAD_REQUEST,
         'service-003',
         `service exists with ${value.name} name for this user.`,
@@ -45,7 +45,7 @@ export class EditServicePipe implements PipeTransform {
     service?: HydratedDocument<Service>,
   ) {
     if (service && service.uuid !== this.request.params.uuid) {
-      handleException(
+      throwException(
         HttpStatus.BAD_REQUEST,
         'service-003',
         `different service exists with ${value.name} name for this user`,

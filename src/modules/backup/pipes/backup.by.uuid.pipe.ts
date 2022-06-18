@@ -1,7 +1,7 @@
 import { Injectable, PipeTransform, Inject, HttpStatus } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ResourceService } from 'src/modules/resource/resource.service';
-import { handleException } from 'src/utilities';
+import { throwException } from 'src/utilities';
 import { BackupService } from '../backup.service';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class BackupByUuidPipe implements PipeTransform {
       !resource ||
       resource.service.user._id.toString() !== user.id.toString()
     ) {
-      handleException(
+      throwException(
         HttpStatus.NOT_FOUND,
         'resource-001',
         'resource does not exist',
@@ -35,7 +35,7 @@ export class BackupByUuidPipe implements PipeTransform {
     });
 
     if (!backup) {
-      handleException(
+      throwException(
         HttpStatus.NOT_FOUND,
         'backup-001',
         'backup does not exist',

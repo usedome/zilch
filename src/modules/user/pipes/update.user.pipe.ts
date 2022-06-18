@@ -1,19 +1,25 @@
 import { HttpStatus, Injectable, PipeTransform, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ServiceService } from 'src/modules/service/service.service';
-import { handleException } from 'src/utilities';
+import { throwException } from 'src/utilities';
 import { UpdateUserDto } from '../dto';
+import { UserService } from '../user.service';
 
 @Injectable()
 export class UpdateUserPipe implements PipeTransform {
   constructor(
     @Inject(REQUEST) private request,
+    private userService: UserService,
     private serviceService: ServiceService,
   ) {}
 
   async transform(value: UpdateUserDto) {
     if (!value.default_service) return value;
 
+    return this.validateDefaultService(value);
+  }
+
+  async validateDefaultService(value: UpdateUserDto) {
     const service = await this.serviceService.findOne({
       uuid: value.default_service,
     });
@@ -21,11 +27,11 @@ export class UpdateUserPipe implements PipeTransform {
     const { user } = this.request;
 
     if (!service) {
-      handleException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
+      throwException(HttpStatus.NOT_FOUND, 'service-001', 'service not found');
     }
 
     if (service.user.toString() !== user._id.toString()) {
-      handleException(
+      throwException(
         HttpStatus.FORBIDDEN,
         'service-002',
         'service does not belong to current user',

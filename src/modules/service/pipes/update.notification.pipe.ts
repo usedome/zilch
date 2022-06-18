@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common';
-import { handleException } from 'src/utilities';
+import { throwException } from 'src/utilities';
 import { UpdateNotificationDto } from '../dto';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class UpdateNotificationPipe implements PipeTransform {
     ];
 
     if (!validNotificationKeys.includes(key.toLowerCase()))
-      handleException(
+      throwException(
         HttpStatus.BAD_REQUEST,
         'service-001',
         'Invalid service notification key',
