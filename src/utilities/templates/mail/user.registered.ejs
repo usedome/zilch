@@ -12,7 +12,7 @@
     <td>
       <div>
         Hello <%= user.name.split(' ')[0] %>. Welcome once more to Backmeup,
-        your trusted application backer. One more step to complete your signup.
+        your trusted data storage backer. One more step to complete your signup.
         Click the link below to verify your email.
       </div>
     </td>
@@ -21,7 +21,7 @@
     <td>
       <div style="margin: 12px 0 2px 0">
         <a
-          href="<%= clientUrl %>/email/verify/{{ $user->activation_token }}"
+          href="<%= clientUrl %>/email/verify/<%= user.email_verification_token %>"
           style="color: #000; font-size: 1em"
         >
           <%= clientUrl %>/email/verify
@@ -43,7 +43,7 @@
         <p
           style="margin: 0; color: #000; font-size: 1em; text-decoration: none"
         >
-          <%= clientUrl %>/email/verify/{{ $user->activation_token }}
+          <%= clientUrl %>/email/verify/<%= user.email_verification_token %>
         </p>
       </div>
     </td>
@@ -52,7 +52,7 @@
     <td>
       <div style="margin-top: 15px">
         <p style="margin: 0">Regards,</p>
-        <p style="margin: 4px 0 0 0">Olamileke</p>
+        <p style="margin: 4px 0 0 0">Backmeup Support</p>
       </div>
     </td>
   </tr>

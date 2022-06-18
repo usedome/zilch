@@ -28,6 +28,9 @@ export class User {
   email_verified_at?: Date;
 
   @Prop({ type: String })
+  email_verification_token?: String;
+
+  @Prop({ type: String })
   @IsString()
   @IsDefined()
   @MinLength(8)
