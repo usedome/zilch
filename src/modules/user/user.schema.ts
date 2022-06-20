@@ -38,7 +38,12 @@ export class User {
   @IsDefined()
   name: string;
 
-  @Prop({ type: String, unique: true, required: true })
+  @Prop({
+    type: String,
+    unique: true,
+    required: true,
+    set: (email: string) => email.toLowerCase(),
+  })
   @IsDefined()
   @IsEmail()
   email: string;

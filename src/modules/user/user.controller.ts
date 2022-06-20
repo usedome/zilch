@@ -7,12 +7,20 @@ import {
   Body,
   Post,
   Res,
+  HttpCode,
 } from '@nestjs/common';
 import { generateRandomToken, UnguardedAuthRoute } from 'src/utilities';
 import { EventEmitter2 } from 'eventemitter2';
+import * as bcrypt from 'bcrypt';
 import { HydratedDocument } from 'mongoose';
-import { CreateUserDto, ResetPasswordDto, UpdateUserDto } from './dto';
 import {
+  ChangePasswordDto,
+  CreateUserDto,
+  ResetPasswordDto,
+  UpdateUserDto,
+} from './dto';
+import {
+  ChangePasswordPipe,
   CreateUserPipe,
   ResetPasswordPipe,
   UpdateUserPipe,
@@ -81,6 +89,7 @@ export class UserController {
 
   @UnguardedAuthRoute()
   @Post('/password/reset')
+  @HttpCode(200)
   async resetPassword(@Body(ResetPasswordPipe) dto: ResetPasswordDto) {
     const user = await this.userService.findOne({ email: dto.email });
     user.password_reset = {
@@ -93,5 +102,18 @@ export class UserController {
       new UserResetPasswordEvent(user),
     );
     return { message: 'Password reset email sent successfully' };
+  }
+
+  @UnguardedAuthRoute()
+  @Put('/password/change/:token')
+  @HttpCode(200)
+  async changePassword(
+    @Param('token', ChangePasswordPipe) user: HydratedDocument<User>,
+    @Body() body: ChangePasswordDto,
+  ) {
+    user.password = await bcrypt.hash(body.password, 10);
+    user.password_reset = undefined;
+    await user.save();
+    return { message: 'user updated successfully', user };
   }
 }
