@@ -16,13 +16,14 @@ import { HydratedDocument } from 'mongoose';
 import {
   ChangePasswordDto,
   CreateUserDto,
+  ResetEmailDto,
   ResetPasswordDto,
   UpdateUserDto,
 } from './dto';
 import {
   ChangePasswordPipe,
   CreateUserPipe,
-  ResetPasswordPipe,
+  UserResetPipe,
   UpdateUserPipe,
   VerifyUserPipe,
 } from './pipes';
@@ -90,7 +91,7 @@ export class UserController {
   @UnguardedAuthRoute()
   @Post('/password/reset')
   @HttpCode(200)
-  async resetPassword(@Body(ResetPasswordPipe) dto: ResetPasswordDto) {
+  async resetPassword(@Body(UserResetPipe) dto: ResetPasswordDto) {
     const user = await this.userService.findOne({ email: dto.email });
     user.password_reset = {
       token: generateRandomToken(60),
@@ -115,5 +116,10 @@ export class UserController {
     user.password_reset = undefined;
     await user.save();
     return { message: 'user updated successfully', user };
+  }
+
+  @Post('/email/reset')
+  async resetEmail(@Req() req, @Body() dto: ResetEmailDto) {
+    const { user }: Request & { user: HydratedDocument<User> } = req;
   }
 }

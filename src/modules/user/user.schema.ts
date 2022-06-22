@@ -11,7 +11,7 @@ import { Service } from '../service/service.schema';
 
 export type UserDocument = User & Document;
 
-class UserResetPassword {
+class UserReset {
   token: string;
   expires_in: number;
 }
@@ -51,6 +51,9 @@ export class User {
   @Prop({ type: String })
   email_verification_token?: String;
 
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  email_reset?: UserReset;
+
   @Prop({ type: String })
   @IsString()
   @IsDefined()
@@ -58,7 +61,7 @@ export class User {
   password: string;
 
   @Prop({ type: MongooseSchema.Types.Mixed })
-  password_reset?: UserResetPassword;
+  password_reset?: UserReset;
 
   @Prop({ type: String })
   avatar?: string;

@@ -20,3 +20,5 @@ export class UpdateUserDto extends PartialType(
 export class ResetPasswordDto extends PickType(User, ['email'] as const) {}
 
 export class ChangePasswordDto extends PickType(User, ['password'] as const) {}
+
+export class ResetEmailDto extends PickType(User, ['password'] as const) {}
