@@ -1,11 +1,5 @@
 import { SchemaFactory, Schema, Prop } from '@nestjs/mongoose';
-import {
-  IsDefined,
-  IsString,
-  MinLength,
-  IsEmail,
-  isDefined,
-} from 'class-validator';
+import { IsDefined, IsString, MinLength, IsEmail } from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Service } from '../service/service.schema';
 
@@ -40,7 +34,12 @@ export class User {
   @Prop({ type: String, required: true })
   @IsString()
   @IsDefined()
-  name: string;
+  first_name: string;
+
+  @Prop({ type: String, required: true })
+  @IsString()
+  @IsDefined()
+  last_name: string;
 
   @Prop({
     type: String,

@@ -2,7 +2,11 @@ import { PartialType, PickType } from '@nestjs/mapped-types';
 import { User } from '../user.schema';
 import { IsDefined, IsString, MinLength } from 'class-validator';
 
-export class CreateUserDto extends PickType(User, ['name', 'email'] as const) {
+export class CreateUserDto extends PickType(User, [
+  'first_name',
+  'last_name',
+  'email',
+] as const) {
   @IsDefined()
   @IsString()
   @MinLength(8)
@@ -13,7 +17,13 @@ export class CreateUserDto extends PickType(User, ['name', 'email'] as const) {
 }
 
 export class UpdateUserDto extends PartialType(
-  PickType(User, ['name', 'email', 'password', 'default_service'] as const),
+  PickType(User, [
+    'first_name',
+    'last_name',
+    'email',
+    'password',
+    'default_service',
+  ] as const),
 ) {
   avatar?: File | string;
 }

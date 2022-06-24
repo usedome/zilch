@@ -26,7 +26,10 @@ export class UserService {
     return await this.user.findOne({ ...filter });
   }
 
-  async firstOrCreate(email: string, dto: Pick<User, 'name' | 'avatar'>) {
+  async firstOrCreate(
+    email: string,
+    dto: Pick<User, 'first_name' | 'last_name' | 'avatar'>,
+  ) {
     const user = await this.findOne({ email });
     if (user) return user;
     return await this.create({

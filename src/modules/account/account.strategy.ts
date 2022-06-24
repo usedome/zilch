@@ -17,10 +17,15 @@ export class AccountStrategy extends PassportStrategy(Strategy, 'google') {
 
   async validate(_: string, __: string, profile: any, verify: VerifyCallback) {
     const { name: profileName, emails, photos } = profile;
-    const name = profileName.givenName + ' ' + profileName.familyName;
+    const first_name = profileName.givenName;
+    const last_name = profileName.familyName;
     const email = emails[0].value;
     const avatar = photos[0].value;
-    const user = await this.userService.firstOrCreate(email, { name, avatar });
+    const user = await this.userService.firstOrCreate(email, {
+      first_name,
+      last_name,
+      avatar,
+    });
     verify(null, user);
   }
 }
