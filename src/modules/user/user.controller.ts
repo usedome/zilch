@@ -14,6 +14,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import * as bcrypt from 'bcrypt';
 import { HydratedDocument } from 'mongoose';
 import {
+  ChangeEmailDto,
   ChangePasswordDto,
   CreateUserDto,
   ResetEmailDto,
@@ -21,14 +22,20 @@ import {
   UpdateUserDto,
 } from './dto';
 import {
-  ChangePasswordPipe,
+  UserChangePipe,
   CreateUserPipe,
   UserResetPipe,
   UpdateUserPipe,
   VerifyUserPipe,
 } from './pipes';
 import { UserService } from './user.service';
-import { UserRegisteredEvent, UserResetPasswordEvent } from './events';
+import {
+  UserEmailChangedEvent,
+  UserRegisteredEvent,
+  UserResetEmailEvent,
+  UserResetEmailVerifyEvent,
+  UserResetPasswordEvent,
+} from './events';
 import { TokenService } from '../token/token.service';
 import { User } from './user.schema';
 
@@ -106,20 +113,66 @@ export class UserController {
   }
 
   @UnguardedAuthRoute()
-  @Put('/password/change/:token')
+  @Put('/password/change/:password_reset_token')
   @HttpCode(200)
   async changePassword(
-    @Param('token', ChangePasswordPipe) user: HydratedDocument<User>,
+    @Param('password_reset_token', UserChangePipe)
+    user: HydratedDocument<User>,
     @Body() body: ChangePasswordDto,
   ) {
     user.password = await bcrypt.hash(body.password, 10);
     user.password_reset = undefined;
     await user.save();
-    return { message: 'user updated successfully', user };
+    return { message: 'Password changed successfully', user };
   }
 
   @Post('/email/reset')
-  async resetEmail(@Req() req, @Body() dto: ResetEmailDto) {
+  @HttpCode(200)
+  async resetEmail(@Req() req, @Body(UserResetPipe) dto: ResetEmailDto) {
     const { user }: Request & { user: HydratedDocument<User> } = req;
+    user.email_reset = {
+      token: generateRandomToken(60),
+      expires_in: Date.now() + 15 * 60 * 60 * 1000,
+    };
+    await user.save();
+    this.eventEmitter.emit('user.reset.email', new UserResetEmailEvent(user));
+    return { message: 'Email reset mail sent successfully' };
+  }
+
+  @UnguardedAuthRoute()
+  @Post('/email/verify/:email_reset_token')
+  @HttpCode(200)
+  async verifyEmail(
+    @Param('email_reset_token', UserChangePipe) user: HydratedDocument<User>,
+    @Body() dto: ChangeEmailDto,
+  ) {
+    user.email_reset = {
+      token: generateRandomToken(60),
+      expires_in: Date.now() + 15 * 60 * 60 * 1000,
+      email: dto.email,
+    };
+    await user.save();
+    this.eventEmitter.emit(
+      'user.reset.email.verify',
+      new UserResetEmailVerifyEvent(user, dto.email),
+    );
+    return { message: 'Email verification mail sent successfully' };
+  }
+
+  @UnguardedAuthRoute()
+  @Put('/email/change/:email_reset_token')
+  @HttpCode(200)
+  async changeEmail(
+    @Param('email_reset_token', UserChangePipe) user: HydratedDocument<User>,
+  ) {
+    const email = user.email_reset?.email as string;
+    user.email = email ?? user.email;
+    user.email_reset = undefined;
+    await user.save();
+    this.eventEmitter.emit(
+      'user.email.changed',
+      new UserEmailChangedEvent(user),
+    );
+    return { user, message: 'User email changed successfully' };
   }
 }

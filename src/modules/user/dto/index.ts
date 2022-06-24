@@ -3,6 +3,7 @@ import { User } from '../user.schema';
 import { IsDefined, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto extends PickType(User, ['name', 'email'] as const) {
+  @IsDefined()
   @IsString()
   @MinLength(8)
   password: string;
@@ -22,3 +23,5 @@ export class ResetPasswordDto extends PickType(User, ['email'] as const) {}
 export class ChangePasswordDto extends PickType(User, ['password'] as const) {}
 
 export class ResetEmailDto extends PickType(User, ['password'] as const) {}
+
+export class ChangeEmailDto extends PickType(User, ['email'] as const) {}

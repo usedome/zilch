@@ -1,0 +1,29 @@
+<%- include('layouts/layout.top.ejs') %>
+
+    <table width="100%">
+        <tr>
+            <td>
+                <p style="margin: 15px 0 12px 0; font-weight: bold; text-align: center">
+                    Backup Email Changed
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+                    Hello there <%= user.name.split(' ')[0] %>. The email address associated with your Backmeup account has been successfully changed to this email.
+
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div style="margin-top: 15px">
+        <p style="margin: 0">Regards,</p>
+        <p style="margin: 2px 0 0 0">Backmeup Support</p>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<%- include(' layouts/layout.bottom.ejs') %>

@@ -34,6 +34,30 @@ export class MailService {
     await this.mail(mailParams, 'user.reset.password.ejs', { user });
   }
 
+  async handleUserResetEmailEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: 'Backmeup: Reset Your Email',
+    };
+    await this.mail(mailParams, 'user.reset.email.ejs', { user });
+  }
+
+  async handleUserResetEmailVerifyEvent(user: User, email: string) {
+    const mailParams = {
+      to: email,
+      subject: 'Backmeup: Verify Your Email',
+    };
+    await this.mail(mailParams, 'user.reset.email.verify.ejs', { user, email });
+  }
+
+  async handleUserEmailChangedEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: 'Backmeup: Email Changed Successfully',
+    };
+    await this.mail(mailParams, 'user.email.changed.ejs', { user });
+  }
+
   async mail(
     mailParams: { [key: string]: string },
     template: string,

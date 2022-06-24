@@ -16,6 +16,10 @@ class UserReset {
   expires_in: number;
 }
 
+class UserEmailReset extends UserReset {
+  email?: string;
+}
+
 @Schema({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   toJSON: {
@@ -52,7 +56,7 @@ export class User {
   email_verification_token?: String;
 
   @Prop({ type: MongooseSchema.Types.Mixed })
-  email_reset?: UserReset;
+  email_reset?: UserEmailReset;
 
   @Prop({ type: String })
   @IsString()

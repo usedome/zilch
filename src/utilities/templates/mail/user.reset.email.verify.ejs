@@ -4,16 +4,16 @@
   <tr>
     <td>
       <p style="margin: 15px 0 12px 0; font-weight: bold; text-align: center">
-        Reset Your Backmeup Email
+        Verify Your Backmeup Email
       </p>
     </td>
   </tr>
   <tr>
     <td>
       <div>
-        Hello <%= user.name.split(' ')[0] %>. A request was made to change your
-        Backmeup email address. To continue with this process, click the link
-        below. Please note that the link expires in 15 minutes.
+        Hello. A request was made to change the email address associated with
+        <%= user.name %>'s Backmeup account to this email address. To complete
+        this process, please click the link below.
       </div>
     </td>
   </tr>
@@ -21,10 +21,10 @@
     <td>
       <div style="margin: 12px 0 2px 0">
         <a
-          href="<%= clientUrl %>/email/reset/<%= user.email_reset.token %>"
+          href="<%= clientUrl %>/email/verify/<%= user.email_reset.token %>?action=change"
           style="color: #000; font-size: 1em"
         >
-          <%= clientUrl %>/email/reset
+          <%= clientUrl %>/email/verify
         </a>
       </div>
     </td>
@@ -43,7 +43,8 @@
         <p
           style="margin: 0; color: #000; font-size: 1em; text-decoration: none"
         >
-          <%= clientUrl %>/email/reset/<%= user.email_reset.token %>
+          <%= clientUrl %>/email/verify/<%= user.email_reset.token
+          %>?action=change
         </p>
       </div>
     </td>

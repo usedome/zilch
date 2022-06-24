@@ -32,12 +32,12 @@ export class UserResetPipe implements PipeTransform {
     return dto;
   }
 
-  validateResetEmail(dto: ResetEmailDto) {
+  async validateResetEmail(dto: ResetEmailDto) {
     const { user } = this.request;
-    if (!bcrypt.compare(dto.password, user.password))
+    if (!(await bcrypt.compare(dto.password, user.password)))
       throwException(
         HttpStatus.BAD_REQUEST,
-        'user-006',
+        'user-007',
         'Password is incorrect',
       );
     return dto;

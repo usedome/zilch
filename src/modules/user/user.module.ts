@@ -6,7 +6,13 @@ import { userPlugin, uuidPlugin } from 'src/utilities';
 import { UserController } from './user.controller';
 import { ServiceModule } from '../service/service.module';
 import { MailModule } from '../mail/mail.module';
-import { UserRegisteredListener, UserResetPasswordListener } from './listeners';
+import {
+  UserEmailChangedListener,
+  UserRegisteredListener,
+  UserResetEmailListener,
+  UserResetEmailVerifyListener,
+  UserResetPasswordListener,
+} from './listeners';
 import { TokenModule } from '../token/token.module';
 
 @Module({
@@ -31,7 +37,14 @@ import { TokenModule } from '../token/token.module';
     forwardRef(() => TokenModule),
     MailModule,
   ],
-  providers: [UserService, UserRegisteredListener, UserResetPasswordListener],
+  providers: [
+    UserEmailChangedListener,
+    UserService,
+    UserRegisteredListener,
+    UserResetEmailListener,
+    UserResetEmailVerifyListener,
+    UserResetPasswordListener,
+  ],
   exports: [UserService],
   controllers: [UserController],
 })
