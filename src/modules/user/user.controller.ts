@@ -112,6 +112,15 @@ export class UserController {
     return { message: 'Password reset email sent successfully' };
   }
 
+  @Put('/password/change')
+  @HttpCode(200)
+  async changePasswordAuth(@Body() body: ChangePasswordDto, @Req() req) {
+    const { user } = req;
+    user.password = await bcrypt.hash(body.password, 10);
+    await user.save();
+    return { message: 'Password changed successfully', user };
+  }
+
   @UnguardedAuthRoute()
   @Put('/password/change/:password_reset_token')
   @HttpCode(200)
