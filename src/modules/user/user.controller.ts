@@ -13,6 +13,7 @@ import { generateRandomToken, UnguardedAuthRoute } from 'src/utilities';
 import { EventEmitter2 } from 'eventemitter2';
 import * as bcrypt from 'bcrypt';
 import { HydratedDocument } from 'mongoose';
+import { FormDataRequest } from 'nestjs-form-data';
 import {
   ChangeEmailDto,
   ChangePasswordDto,
@@ -85,6 +86,7 @@ export class UserController {
     return { user, message: 'user fetched successfully' };
   }
 
+  @FormDataRequest()
   @Put()
   async updateMe(@Req() req, @Body(UpdateUserPipe) body: UpdateUserDto) {
     const { user } = req;

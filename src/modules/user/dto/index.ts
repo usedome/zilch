@@ -1,7 +1,7 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
 import { User } from '../user.schema';
 import { IsDefined, IsString, MinLength } from 'class-validator';
-
+import { HasMimeType, IsFile, FileSystemStoredFile } from 'nestjs-form-data';
 export class CreateUserDto extends PickType(User, [
   'first_name',
   'last_name',
@@ -17,15 +17,9 @@ export class CreateUserDto extends PickType(User, [
 }
 
 export class UpdateUserDto extends PartialType(
-  PickType(User, [
-    'first_name',
-    'last_name',
-    'email',
-    'password',
-    'default_service',
-  ] as const),
+  PickType(User, ['first_name', 'last_name', 'default_service'] as const),
 ) {
-  avatar?: File | string;
+  avatar?: File;
 }
 
 export class ResetPasswordDto extends PickType(User, ['email'] as const) {}
