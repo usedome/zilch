@@ -5,19 +5,19 @@ import { User } from '../user/user.schema';
 
 export type ServiceDocument = Service & Document;
 
-class ServiceApiKey {
+export class ServiceApiKey {
   name: string;
   uuid: string;
   key: string;
   last_used: Date | null;
 }
 
-class ServiceIpAddress {
+export class ServiceIpAddress {
   uuid: string;
   value: string;
 }
 
-class ServiceNotification {
+export class ServiceNotification {
   channels: string[];
   events: { [key: string]: boolean };
 }
