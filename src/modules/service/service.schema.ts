@@ -15,6 +15,7 @@ export class ServiceApiKey {
 export class ServiceIpAddress {
   uuid: string;
   value: string;
+  last_used?: Date | null;
 }
 
 export class ServiceNotification {
