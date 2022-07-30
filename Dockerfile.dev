@@ -2,8 +2,6 @@ FROM node:17-alpine
 
 WORKDIR usr/src/app
 
-ENV NODE_ENV=development
-
 COPY package*.json ./
 
 RUN yarn global add @nestjs/cli
