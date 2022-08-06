@@ -21,10 +21,10 @@
     <td>
       <div style="margin: 12px 0 2px 0">
         <a
-          href="<%= clientUrl %>/email/verify/<%= user.email_reset.token %>?action=change"
+          href="<%= clientUrl %>/email/change/<%= user.email_reset.token %>?action=change"
           style="color: #000; font-size: 1em"
         >
-          <%= clientUrl %>/email/verify
+          <%= clientUrl %>/email/change
         </a>
       </div>
     </td>
@@ -43,7 +43,7 @@
         <p
           style="margin: 0; color: #000; font-size: 1em; text-decoration: none"
         >
-          <%= clientUrl %>/email/verify/<%= user.email_reset.token
+          <%= clientUrl %>/email/change/<%= user.email_reset.token
           %>?action=change
         </p>
       </div>
