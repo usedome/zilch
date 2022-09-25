@@ -4,7 +4,7 @@ import { UnguardedAuthRoute } from 'src/utilities';
 
 @Controller('accounts')
 export class AccountController {
-  @Get()
+  @Get('/google')
   @UnguardedAuthRoute()
   @UseGuards(AuthGuard('google'))
   async access() {}

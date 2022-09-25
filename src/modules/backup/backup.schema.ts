@@ -1,5 +1,4 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
-import { IsDefined, IsString } from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Resource } from '../resource/resource.schema';
 
@@ -19,13 +18,11 @@ export class Backup {
   })
   resource: Resource;
 
-  @IsString()
-  @IsDefined()
   @Prop({
     type: MongooseSchema.Types.Mixed,
     required: true,
   })
-  value: any;
+  url: string;
 }
 
 export const BackupSchema = SchemaFactory.createForClass(Backup);

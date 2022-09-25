@@ -12,7 +12,7 @@ export class CreateTokenPipe implements PipeTransform {
     const user = await this.userService.findOne({ email: dto.email });
 
     if (!user || !(await compare(dto.password, user.password)))
-      throwException(HttpStatus.NOT_FOUND, 'token-001', 'User does not exist');
+      throwException(HttpStatus.NOT_FOUND, 'user-001', 'User does not exist');
 
     return dto;
   }
