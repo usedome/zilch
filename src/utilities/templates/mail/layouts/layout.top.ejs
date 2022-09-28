@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Backmeup</title>
+    <title>Dome</title>
     <style type="text/css">
-      @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Quicksand&display=swap");
 
       .table__parent {
         padding: 50px;
+      }
+
+      .table__main {
+        padding: 30px 30px 40px 30px;
+        line-height: 1.78;
+      }
+
+      .logo {
+        object-fit: cover;
       }
 
       @media (max-width: 610px) {
@@ -16,6 +25,11 @@
 
         .table__main {
           width: 100%;
+          padding: 20px 15px 20px 15px;
+        }
+
+        .logo {
+          margin: 25px 0 0 15px;
         }
       }
     </style>
@@ -35,18 +49,18 @@
       class="table__parent"
       cellpadding="0"
       cellspacing="0"
-      style="background: #fbfbfb; font-size: 1.1em"
+      style="background: #fbfbfb; font-size: 1.15em"
     >
       <tr>
+        <td align="center">
+          <img
+            class="logo"
+            src="https://res.cloudinary.com/olamileke/image/upload/v1663418501/backmeup/assets/logos/logo_transparent_ligpzi.png"
+            width="200px"
+            height="60px"
+            alt="Dome"
+          />
+        </td>
+      </tr>
+      <tr>
         <td>
-          <table
-            width="600px"
-            class="table__main"
-            align="center"
-            cellpadding="0"
-            cellspacing="0"
-            bgcolor="white"
-            style="padding: 30px; line-height: 1.7"
-          >
-            <tr>
-              <td

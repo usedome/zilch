@@ -21,7 +21,7 @@ export class MailService {
   async handleUserRegisteredEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Verify Your Email',
+      subject: 'Dome: Verify Your Email',
     };
     await this.mail(mailParams, 'user.registered.ejs', { user });
   }
@@ -29,7 +29,7 @@ export class MailService {
   async handleUserResetPasswordEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Reset Your Password',
+      subject: 'Dome: Reset Your Password',
     };
     await this.mail(mailParams, 'user.reset.password.ejs', { user });
   }
@@ -37,7 +37,7 @@ export class MailService {
   async handleUserResetEmailEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Reset Your Email',
+      subject: 'Dome: Reset Your Email',
     };
     await this.mail(mailParams, 'user.reset.email.ejs', { user });
   }
@@ -45,7 +45,7 @@ export class MailService {
   async handleUserResetEmailVerifyEvent(user: User, email: string) {
     const mailParams = {
       to: email,
-      subject: 'Backmeup: Verify Your Email',
+      subject: 'Dome: Verify Your Email',
     };
     await this.mail(mailParams, 'user.reset.email.verify.ejs', { user, email });
   }
@@ -53,7 +53,7 @@ export class MailService {
   async handleUserEmailChangedEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Email Changed Successfully',
+      subject: 'Dome: Email Changed Successfully',
     };
     await this.mail(mailParams, 'user.email.changed.ejs', { user });
   }
