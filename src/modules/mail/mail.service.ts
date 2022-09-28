@@ -26,6 +26,14 @@ export class MailService {
     await this.mail(mailParams, 'user.registered.ejs', { user });
   }
 
+  async handleUserEmailVerifiedEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: 'Dome: Email Verified Successfully',
+    };
+    await this.mail(mailParams, 'user.email.verified.ejs', { user });
+  }
+
   async handleUserResetPasswordEvent(user: User) {
     const mailParams = {
       to: user.email,

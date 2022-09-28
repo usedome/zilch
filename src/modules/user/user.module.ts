@@ -9,6 +9,7 @@ import { MailModule } from '../mail/mail.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import {
   UserEmailChangedListener,
+  UserEmailVerifiedListener,
   UserRegisteredListener,
   UserResetEmailListener,
   UserResetEmailVerifyListener,
@@ -40,8 +41,9 @@ import { TokenModule } from '../token/token.module';
     MailModule,
   ],
   providers: [
-    UserEmailChangedListener,
     UserService,
+    UserEmailChangedListener,
+    UserEmailVerifiedListener,
     UserRegisteredListener,
     UserResetEmailListener,
     UserResetEmailVerifyListener,

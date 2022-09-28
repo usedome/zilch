@@ -32,6 +32,7 @@ import {
 import { UserService } from './user.service';
 import {
   UserEmailChangedEvent,
+  UserEmailVerifiedEvent,
   UserRegisteredEvent,
   UserResetEmailEvent,
   UserResetEmailVerifyEvent,
@@ -77,6 +78,10 @@ export class UserController {
   ) {
     user.email_verification_token = undefined;
     await user.save();
+    this.eventEmitter.emit(
+      'user.email.verified',
+      new UserEmailVerifiedEvent(user),
+    );
     res.status(200).json({ message: 'user verified successfully', user });
   }
 

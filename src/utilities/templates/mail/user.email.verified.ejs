@@ -1,0 +1,52 @@
+<%- include('layouts/layout.top.ejs') %>
+
+<table
+  width="600px"
+  class="table__main"
+  align="center"
+  cellpadding="0"
+  cellspacing="0"
+  bgcolor="white"
+>
+  <tr>
+    <td>
+      <table width="100%">
+        <tr>
+          <td>
+            <p
+              style="
+                margin: 0 0 9px 0;
+                font-size: 1.1em;
+                font-weight: bold;
+                text-align: center;
+              "
+            >
+              Email Verified Successfully
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            <img
+              src="https://ci4.googleusercontent.com/proxy/utdf3aaXABvLN9Z3yg1tWArNcNDe4sMaO_mi88_cZd53W3rt8-pkNFb3nk084_XJY7RIhwQcnv8U784Wo5is7n2IOCo_denjwT4fkfnxX6I9vRrlNClMa2fdmCNazf9WAggitp0n-f5crPdzvbeKXS1hMJ3CTpc=s0-d-e1-ft#https://res.cloudinary.com/olamileke/image/upload/v1660687381/backmeup/assets/email/check_rmths4.png"
+              width="60px"
+              style="margin: 10px 0"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              Hey there <%= user.first_name %>. Your email address has been
+              successfully verified. Get started by creating resources for your
+              different services. For these resources you can also easily secure
+              them by setting up API keys and IP restrictions. Happy backing up!
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<%- include('layouts/layout.bottom.ejs') %>
