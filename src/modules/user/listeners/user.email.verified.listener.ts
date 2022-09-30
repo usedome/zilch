@@ -8,7 +8,7 @@ export class UserEmailVerifiedListener {
   constructor(private mailService: MailService) {}
 
   @OnEvent('user.email.verified')
-  async handleUserEmailVerifiedEventListener(event: UserEmailVerifiedEvent) {
+  async handleUserEmailVerifiedListener(event: UserEmailVerifiedEvent) {
     await this.mailService.handleUserEmailVerifiedEvent(event.user);
   }
 }

@@ -1,5 +1,11 @@
 import { SchemaFactory, Schema, Prop } from '@nestjs/mongoose';
-import { IsDefined, IsString, MinLength, IsEmail } from 'class-validator';
+import {
+  IsDefined,
+  IsString,
+  MinLength,
+  IsEmail,
+  IsOptional,
+} from 'class-validator';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Service } from '../service/service.schema';
 
@@ -56,6 +62,11 @@ export class User {
 
   @Prop({ type: MongooseSchema.Types.Mixed })
   email_reset?: UserEmailReset;
+
+  @Prop({ type: String })
+  @IsString()
+  @IsOptional()
+  auth_type: 'GMAIL' | 'PASSWORD';
 
   @Prop({ type: String })
   @IsString()

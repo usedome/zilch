@@ -10,6 +10,7 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
 import {
   UserEmailChangedListener,
   UserEmailVerifiedListener,
+  UserRegisteredGoogleListener,
   UserRegisteredListener,
   UserResetEmailListener,
   UserResetEmailVerifyListener,
@@ -45,6 +46,7 @@ import { TokenModule } from '../token/token.module';
     UserEmailChangedListener,
     UserEmailVerifiedListener,
     UserRegisteredListener,
+    UserRegisteredGoogleListener,
     UserResetEmailListener,
     UserResetEmailVerifyListener,
     UserResetPasswordListener,

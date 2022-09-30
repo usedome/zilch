@@ -21,9 +21,17 @@ export class MailService {
   async handleUserRegisteredEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Dome: Verify Your Email',
+      subject: `Dome: Welcome ${user.first_name}!`,
     };
     await this.mail(mailParams, 'user.registered.ejs', { user });
+  }
+
+  async handleUserRegisteredGoogleEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: `Dome: Welcome ${user.first_name}!`,
+    };
+    await this.mail(mailParams, 'user.registered.google.ejs', { user });
   }
 
   async handleUserEmailVerifiedEvent(user: User) {
@@ -37,7 +45,7 @@ export class MailService {
   async handleUserResetPasswordEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Dome: Reset Your Password',
+      subject: 'Dome: Password Reset Request',
     };
     await this.mail(mailParams, 'user.reset.password.ejs', { user });
   }

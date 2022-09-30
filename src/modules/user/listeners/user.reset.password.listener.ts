@@ -8,7 +8,7 @@ export class UserResetPasswordListener {
   constructor(private mailService: MailService) {}
 
   @OnEvent('user.reset.password')
-  async handleUserResetPasswordEventListener(event: UserResetPasswordEvent) {
+  async handleUserResetPasswordListener(event: UserResetPasswordEvent) {
     await this.mailService.handleUserResetPasswordEvent(event.user);
   }
 }

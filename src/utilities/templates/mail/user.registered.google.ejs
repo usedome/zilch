@@ -1,0 +1,43 @@
+<%- include('layouts/layout.top.ejs') %>
+
+<table
+  width="600px"
+  class="table__main"
+  align="center"
+  cellpadding="0"
+  cellspacing="0"
+  bgcolor="white"
+>
+  <tr>
+    <td>
+      <table width="100%">
+        <tr>
+          <td>
+            <p
+              style="
+                margin: 0 0 9px 0;
+                font-size: 1.1em;
+                font-weight: bold;
+                text-align: center;
+              "
+            >
+              Welcome to Dome <%= user.first_name %>!
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              Hello <%= user.first_name %>. We are so excited to have you on
+              board. Get started by creating resources for your different
+              services. For these resources you can also easily secure them by
+              setting up API keys and IP restrictions. Happy backing up!
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<%- include('layouts/layout.bottom.ejs') %>

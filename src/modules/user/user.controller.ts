@@ -55,7 +55,10 @@ export class UserController {
     @Res({ passthrough: true }) res,
     @Body(CreateUserPipe) body: CreateUserDto,
   ) {
-    const user = await this.userService.create(body);
+    const user = await this.userService.create({
+      ...body,
+      auth_type: 'PASSWORD',
+    });
     const token = await this.tokenService.generate(user._id);
     this.eventEmitter.emit('user.registered', new UserRegisteredEvent(user));
     res.status(201).json({ user, token, message: 'user created successfully' });
