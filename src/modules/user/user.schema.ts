@@ -66,7 +66,7 @@ export class User {
   @Prop({ type: String })
   @IsString()
   @IsOptional()
-  auth_type: 'GMAIL' | 'PASSWORD';
+  auth_type: 'GOOGLE' | 'PASSWORD';
 
   @Prop({ type: String })
   @IsString()

@@ -23,7 +23,8 @@ export class UserService {
     return await this.user.create({
       _id,
       ...dto,
-      email_verification_token: generateRandomToken(60),
+      email_verification_token:
+        dto.auth_type === 'GOOGLE' ? undefined : generateRandomToken(60),
     });
   }
 
@@ -42,7 +43,7 @@ export class UserService {
       ...dto,
       password: generateRandomToken(12),
     });
-    if (user.auth_type === 'GMAIL')
+    if (user.auth_type === 'GOOGLE')
       this.eventEmitter.emit(
         'user.registered.google',
         new UserRegisteredGoogleEvent(user),

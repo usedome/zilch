@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { throwException } from 'src/utilities';
 import { ConfigService } from '../config/config.service';
 import { UserService } from '../user/user.service';
 
@@ -28,8 +29,16 @@ export class GoogleAccountStrategy extends PassportStrategy(
       first_name,
       last_name,
       avatar,
-      auth_type: 'GMAIL',
+      auth_type: 'GOOGLE',
     });
+
+    if (user.auth_type !== 'GOOGLE')
+      throwException(
+        HttpStatus.BAD_REQUEST,
+        'user-002',
+        "user's authentication type is not google",
+      );
+
     verify(null, user);
   }
 }
