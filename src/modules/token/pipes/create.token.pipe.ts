@@ -14,6 +14,13 @@ export class CreateTokenPipe implements PipeTransform {
     if (!user || !(await compare(dto.password, user.password)))
       throwException(HttpStatus.NOT_FOUND, 'user-001', 'User does not exist');
 
+    if (user.auth_type !== 'PASSWORD')
+      throwException(
+        HttpStatus.BAD_REQUEST,
+        'user-002',
+        'email/password authentication is not enabled for this user',
+      );
+
     return dto;
   }
 }

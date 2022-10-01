@@ -36,7 +36,7 @@ export class GoogleAccountStrategy extends PassportStrategy(
       throwException(
         HttpStatus.BAD_REQUEST,
         'user-002',
-        "user's authentication type is not google",
+        'google authentication is not enabled for this user',
       );
 
     verify(null, user);
