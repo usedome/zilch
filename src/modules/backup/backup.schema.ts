@@ -19,7 +19,7 @@ export class Backup {
   resource: Resource;
 
   @Prop({
-    type: MongooseSchema.Types.Mixed,
+    type: String,
     required: true,
   })
   url: string;
