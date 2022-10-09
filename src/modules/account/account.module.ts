@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
-import { AccountStrategy } from './account.strategy';
+import { GoogleAccountStrategy } from './google.account.strategy';
 import { AccountController } from './account.controller';
 import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [ConfigModule, UserModule],
-  providers: [AccountStrategy],
+  providers: [GoogleAccountStrategy],
   controllers: [AccountController],
 })
 export class AccountModule {}

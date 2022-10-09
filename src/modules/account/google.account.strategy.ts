@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { throwException } from 'src/utilities';
 import { ConfigService } from '../config/config.service';
 import { UserService } from '../user/user.service';
 
 @Injectable()
-export class AccountStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleAccountStrategy extends PassportStrategy(
+  Strategy,
+  'google',
+) {
   constructor(configService: ConfigService, private userService: UserService) {
     super({
       clientID: configService.get('GOOGLE_CLIENT_ID'),
@@ -25,7 +29,16 @@ export class AccountStrategy extends PassportStrategy(Strategy, 'google') {
       first_name,
       last_name,
       avatar,
+      auth_type: 'GOOGLE',
     });
+
+    if (user.auth_type !== 'GOOGLE')
+      throwException(
+        HttpStatus.BAD_REQUEST,
+        'user-002',
+        'google authentication is not enabled for this user',
+      );
+
     verify(null, user);
   }
 }

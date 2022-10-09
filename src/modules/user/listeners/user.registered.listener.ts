@@ -8,7 +8,7 @@ export class UserRegisteredListener {
   constructor(private mailService: MailService) {}
 
   @OnEvent('user.registered')
-  async handleUserRegisteredEventListener(event: UserRegisteredEvent) {
+  async handleUserRegisteredListener(event: UserRegisteredEvent) {
     await this.mailService.handleUserRegisteredEvent(event.user);
   }
 }

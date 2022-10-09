@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
+import { EventEmitter2 } from 'eventemitter2';
 import { Model, Types, HydratedDocument } from 'mongoose';
 import { generateRandomToken } from 'src/utilities';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserRegisteredGoogleEvent } from './events';
 import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private user: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private user: Model<UserDocument>,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   async create(dto: CreateUserDto) {
     const _id = new Types.ObjectId();
@@ -18,7 +23,8 @@ export class UserService {
     return await this.user.create({
       _id,
       ...dto,
-      email_verification_token: generateRandomToken(60),
+      email_verification_token:
+        dto.auth_type === 'GOOGLE' ? undefined : generateRandomToken(60),
     });
   }
 
@@ -28,15 +34,21 @@ export class UserService {
 
   async firstOrCreate(
     email: string,
-    dto: Pick<User, 'first_name' | 'last_name' | 'avatar'>,
+    dto: Pick<User, 'first_name' | 'last_name' | 'avatar' | 'auth_type'>,
   ) {
-    const user = await this.findOne({ email });
+    let user = await this.findOne({ email });
     if (user) return user;
-    return await this.create({
+    user = await this.create({
       email,
       ...dto,
       password: generateRandomToken(12),
     });
+    if (user.auth_type === 'GOOGLE')
+      this.eventEmitter.emit(
+        'user.registered.google',
+        new UserRegisteredGoogleEvent(user),
+      );
+    return user;
   }
 
   async update(user: HydratedDocument<User>, dto: UpdateUserDto) {

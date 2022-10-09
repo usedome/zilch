@@ -21,7 +21,7 @@ export class UserResetPipe implements PipeTransform {
   async validateResetPassword(dto: ResetPasswordDto) {
     const user = await this.userService.findOne({ email: dto.email });
 
-    if (!user) {
+    if (!user || user.auth_type !== 'PASSWORD') {
       throwException(
         HttpStatus.OK,
         '',

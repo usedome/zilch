@@ -21,15 +21,31 @@ export class MailService {
   async handleUserRegisteredEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Verify Your Email',
+      subject: `Dome: Welcome ${user.first_name}!`,
     };
     await this.mail(mailParams, 'user.registered.ejs', { user });
+  }
+
+  async handleUserRegisteredGoogleEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: `Dome: Welcome ${user.first_name}!`,
+    };
+    await this.mail(mailParams, 'user.registered.google.ejs', { user });
+  }
+
+  async handleUserEmailVerifiedEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: 'Dome: Email Verified Successfully',
+    };
+    await this.mail(mailParams, 'user.email.verified.ejs', { user });
   }
 
   async handleUserResetPasswordEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Reset Your Password',
+      subject: 'Dome: Password Reset Request',
     };
     await this.mail(mailParams, 'user.reset.password.ejs', { user });
   }
@@ -37,7 +53,7 @@ export class MailService {
   async handleUserResetEmailEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Reset Your Email',
+      subject: 'Dome: Reset Your Email',
     };
     await this.mail(mailParams, 'user.reset.email.ejs', { user });
   }
@@ -45,7 +61,7 @@ export class MailService {
   async handleUserResetEmailVerifyEvent(user: User, email: string) {
     const mailParams = {
       to: email,
-      subject: 'Backmeup: Verify Your Email',
+      subject: 'Dome: Verify Your Email',
     };
     await this.mail(mailParams, 'user.reset.email.verify.ejs', { user, email });
   }
@@ -53,7 +69,7 @@ export class MailService {
   async handleUserEmailChangedEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Backmeup: Email Changed Successfully',
+      subject: 'Dome: Email Changed Successfully',
     };
     await this.mail(mailParams, 'user.email.changed.ejs', { user });
   }
