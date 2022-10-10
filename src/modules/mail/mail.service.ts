@@ -93,7 +93,16 @@ export class MailService {
   }
 
   generateTemplatePath(template: string) {
-    return path.join('src', 'utilities', 'templates', 'mail', template);
+    return (process.env?.NODE_ENV ?? '').toLowerCase() === 'production'
+      ? path.join(
+          __dirname,
+          '../../',
+          'utilities',
+          'templates',
+          'mail',
+          template,
+        )
+      : path.join('src', 'utilities', 'templates', 'mail', template);
   }
 
   generateTemplateParams(params: { [key: string]: any }) {

@@ -31,6 +31,8 @@ RUN yarn install
 
 COPY --from=build /usr/src/app/dist /usr/src/app/dist
 
+COPY --from=build /usr/src/app/src/utilities/templates /usr/src/app/dist/utilities/templates
+
 EXPOSE 3000
 
 CMD ["node", "dist/main"]
