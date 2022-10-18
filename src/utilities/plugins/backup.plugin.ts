@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 
 export const backupPlugin = (schema: Schema) => {
-  schema.pre('find', async function () {
+  schema.pre(['findOne'], async function () {
     this.populate('resource');
   });
 

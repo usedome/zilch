@@ -1,63 +1,43 @@
 import {
   Controller,
-  Param,
-  Post,
-  Req,
-  Res,
-  Body,
-  Get,
   Query,
-  DefaultValuePipe,
+  Param,
+  Get,
   ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { BackupService } from './backup.service';
 import { HydratedDocument } from 'mongoose';
-import { Resource } from '../resource/resource.schema';
-import { CreateBackupDto } from './dto';
-import { ResourceByUuidPipe } from '../resource/pipes/resource.by.uuid.pipe';
 import { BackupByUuidPipe } from './pipes';
 import { Backup } from './backup.schema';
-import { UnguardedAuthRoute } from 'src/utilities';
+import { ResourceService } from '../resource/resource.service';
 
 @Controller('/resources/:resource_uuid/backups')
 export class BackupController {
-  constructor(private backupService: BackupService) {}
+  constructor(
+    private backupService: BackupService,
+    private resourceService: ResourceService,
+  ) {}
 
-  @UnguardedAuthRoute()
-  @Post()
-  async create(
-    @Req() req,
-    @Res({ passthrough: true }) res,
-    @Body() body: CreateBackupDto,
+  @Get()
+  async getBackups(
+    @Param('resource_uuid') resource_uuid: string,
+    @Query('count', ParseIntPipe, new DefaultValuePipe(6)) count: number,
+    @Query('after_uuid', BackupByUuidPipe) backup?: HydratedDocument<Backup>,
   ) {
-    const { resource } = req;
-    const backup = await this.backupService.create(
-      { ...body },
-      String(resource._id),
-    );
-    res.status(201).json({ backup, message: 'backup created successfully' });
+    const resource = await this.resourceService.findOne({
+      uuid: resource_uuid,
+    });
+    const filter = backup
+      ? {
+          resource: resource._id,
+          created_at: { $lt: backup.created_at },
+        }
+      : {
+          resource: resource._id,
+        };
+
+    const backups = await this.backupService.get({ ...filter }, count);
+    return { backups, message: 'backups fetched successfully' };
   }
-
-  // @Get()
-  // async get(
-  //   @Param('resource_uuid', ResourceByUuidPipe)
-  //   resource: HydratedDocument<Resource>,
-  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  //   @Query('count', new DefaultValuePipe(8), ParseIntPipe) count: number,
-  // ) {
-  //   const { backups, pagination } = await this.backupService.get(
-  //     { resource: String(resource._id) },
-  //     page,
-  //     count,
-  //   );
-
-  //   return { backups, pagination, message: 'backups fetched successfully' };
-  // }
-
-  // @Get('/:backup_uuid')
-  // async getOne(
-  //   @Param('backup_uuid', BackupByUuidPipe) backup: HydratedDocument<Backup>,
-  // ) {
-  //   return { backup, message: 'backup fetched successfully' };
-  // }
 }
