@@ -27,6 +27,10 @@ export class Resource {
   @IsBoolean()
   @Prop({ type: Boolean })
   is_active: boolean;
+
+  created_at: Date;
+
+  updated_at: Date;
 }
 
 export const ResourceSchema = SchemaFactory.createForClass(Resource);

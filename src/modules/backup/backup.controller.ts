@@ -3,6 +3,8 @@ import {
   Query,
   Param,
   Get,
+  Delete,
+  Res,
   ParseIntPipe,
   DefaultValuePipe,
 } from '@nestjs/common';
@@ -48,5 +50,14 @@ export class BackupController {
             }),
           );
     return { backups, hasMoreBackups, message: 'backups fetched successfully' };
+  }
+
+  @Delete('/:backup_uuid')
+  async deleteBackup(
+    @Param('backup_uuid', BackupByUuidPipe) backup: HydratedDocument<Backup>,
+    @Res({ passthrough: true }) res,
+  ) {
+    await backup.delete();
+    res.status(204);
   }
 }

@@ -44,16 +44,36 @@ export class ResourceController {
   async get(
     @Param('service_uuid', ServiceByUuidPipe)
     service: HydratedDocument<Service>,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('count', new DefaultValuePipe(8), ParseIntPipe) count: number,
+    @Query('count', new DefaultValuePipe(12), ParseIntPipe) count: number,
+    @Query('after_uuid', ResourceByUuidPipe)
+    resource?: HydratedDocument<Resource>,
   ) {
-    const { resources, pagination } = await this.resourceService.get(
-      { service: String(service._id) },
-      page,
-      count,
-    );
+    const filter = resource
+      ? {
+          service: service._id,
+          created_at: { $lt: resource.created_at },
+        }
+      : {
+          service: service._id,
+        };
 
-    return { resources, pagination, message: 'resources fetched successfully' };
+    const resources = await this.resourceService.get({ ...filter }, count);
+
+    const hasMoreResources =
+      resources.length === 0
+        ? false
+        : Boolean(
+            await this.resourceService.count({
+              ...filter,
+              created_at: { $lt: resources[0].created_at },
+            }),
+          );
+
+    return {
+      resources,
+      hasMoreResources,
+      message: 'resources fetched successfully',
+    };
   }
 
   @Get('/:resource_uuid')
