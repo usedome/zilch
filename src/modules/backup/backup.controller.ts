@@ -22,7 +22,7 @@ export class BackupController {
   @Get()
   async getBackups(
     @Param('resource_uuid') resource_uuid: string,
-    @Query('count', ParseIntPipe, new DefaultValuePipe(6)) count: number,
+    @Query('count', new DefaultValuePipe(12), ParseIntPipe) count: number,
     @Query('after_uuid', BackupByUuidPipe) backup?: HydratedDocument<Backup>,
   ) {
     const resource = await this.resourceService.findOne({
@@ -38,6 +38,15 @@ export class BackupController {
         };
 
     const backups = await this.backupService.get({ ...filter }, count);
-    return { backups, message: 'backups fetched successfully' };
+    const hasMoreBackups =
+      backups.length === 0
+        ? false
+        : Boolean(
+            await this.backupService.count({
+              ...filter,
+              created_at: { $lt: backups[0].created_at },
+            }),
+          );
+    return { backups, hasMoreBackups, message: 'backups fetched successfully' };
   }
 }

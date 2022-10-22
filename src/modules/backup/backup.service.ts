@@ -19,4 +19,8 @@ export class BackupService {
       .sort({ created_at: 'desc' })
       .limit(count);
   }
+
+  async count(filter: { [key: string]: any }) {
+    return await this.backup.countDocuments({ ...filter });
+  }
 }
