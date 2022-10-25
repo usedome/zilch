@@ -12,7 +12,9 @@ export class ResourceByUuidPipe implements PipeTransform {
     private serviceService: ServiceService,
   ) {}
 
-  async transform(uuid: string) {
+  async transform(uuid?: string) {
+    if (!uuid) return undefined;
+
     if (this.request.params.service_uuid)
       return this.handleResourceRequest(uuid);
 

@@ -26,25 +26,15 @@ export class ResourceService {
     return await this.resource.findOne({ ...filter });
   }
 
-  async get(filter: { [key: string]: string }, page: number, limit: number) {
-    const skip = (page - 1) * limit;
-    const resources = await this.resource
+  async get(filter: { [key: string]: any }, count: number) {
+    return await this.resource
       .find({ ...filter })
       .sort({ created_at: 'desc' })
-      .skip(skip)
-      .limit(limit);
-    const pagination = await this.getPagination(filter, page, limit);
-    return { resources, pagination };
+      .limit(count);
   }
 
-  async getPagination(
-    filter: { [key: string]: string },
-    page: number,
-    limit: number,
-  ) {
-    const total = await this.resource.countDocuments(filter);
-    const maxPages = Math.ceil(total / limit);
-    return { currentPage: page, maxPages };
+  async count(filter: { [key: string]: any }) {
+    return await this.resource.countDocuments({ ...filter });
   }
 
   async update(resource: HydratedDocument<Resource>, dto: UpdateResourceDto) {

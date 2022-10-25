@@ -23,6 +23,10 @@ export class Backup {
     required: true,
   })
   url: string;
+
+  created_at: Date;
+
+  updated_at: Date;
 }
 
 export const BackupSchema = SchemaFactory.createForClass(Backup);

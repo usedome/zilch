@@ -12,7 +12,9 @@ export class BackupByUuidPipe implements PipeTransform {
     private resourceService: ResourceService,
   ) {}
 
-  async transform(backup_uuid: string) {
+  async transform(backup_uuid?: string) {
+    if (!backup_uuid) return undefined;
+
     const { params, user } = this.request;
     const resource = await this.resourceService.findOne({
       uuid: params.resource_uuid,
