@@ -6,6 +6,7 @@ import {
   Delete,
   Res,
   ParseIntPipe,
+  HttpStatus,
   DefaultValuePipe,
 } from '@nestjs/common';
 import { BackupService } from './backup.service';
@@ -13,12 +14,18 @@ import { HydratedDocument } from 'mongoose';
 import { BackupByUuidPipe } from './pipes';
 import { Backup } from './backup.schema';
 import { ResourceService } from '../resource/resource.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '../config/config.service';
+import { throwException } from '../../utilities';
 
 @Controller('/resources/:resource_uuid/backups')
 export class BackupController {
   constructor(
     private backupService: BackupService,
     private resourceService: ResourceService,
+    private httpService: HttpService,
+    private configService: ConfigService,
   ) {}
 
   @Get()
@@ -57,7 +64,18 @@ export class BackupController {
     @Param('backup_uuid', BackupByUuidPipe) backup: HydratedDocument<Backup>,
     @Res({ passthrough: true }) res,
   ) {
-    await backup.delete();
-    res.status(204);
+    const url =
+      this.configService.get('DURAN_API_URL') + `/backups/${backup.uuid}`;
+
+    try {
+      await firstValueFrom(this.httpService.delete(url));
+      res.status(204);
+    } catch (error) {
+      return throwException(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        'backup-002',
+        `there was a problem deleting backup with uuid ${backup.uuid}`,
+      );
+    }
   }
 }

@@ -6,9 +6,13 @@ import { BackupController } from './backup.controller';
 import { BackupService } from './backup.service';
 import { ResourceModule } from '../resource/resource.module';
 import { ServiceModule } from '../service/service.module';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
   imports: [
+    ConfigModule,
+    HttpModule,
     ResourceModule,
     ServiceModule,
     MongooseModule.forFeatureAsync([
