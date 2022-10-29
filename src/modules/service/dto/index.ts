@@ -8,7 +8,13 @@ export class CreateServiceDto extends PickType(Service, [
   'backup_duration',
 ] as const) {}
 
-export class UpdateServiceDto extends PartialType(CreateServiceDto) {}
+export class UpdateServiceDto extends PartialType(CreateServiceDto) {
+  @IsBoolean()
+  auth_enabled?: boolean;
+
+  @IsBoolean()
+  ip_whitelist_enabled?: boolean;
+}
 
 export class CreateApiKeyDto {
   @IsDefined()

@@ -21,7 +21,7 @@ export class ServiceService {
   }
 
   async findOne(filter: { [key: string]: string }) {
-    return await this.service.findOne({ ...filter });
+    return await await this.service.findOne({ ...filter });
   }
 
   async get(filter: { [key: string]: string }, page: number, limit: number) {
@@ -46,6 +46,19 @@ export class ServiceService {
   }
 
   async update(service: HydratedDocument<Service>, dto: UpdateServiceDto) {
+    if (dto?.auth_enabled !== undefined) {
+      service.auth = { ...service.auth, is_enabled: dto.auth_enabled };
+      delete dto?.auth_enabled;
+    }
+
+    if (dto?.ip_whitelist_enabled !== undefined) {
+      service.ip_whitelist = {
+        ...service.ip_whitelist,
+        is_enabled: dto.ip_whitelist_enabled,
+      };
+      delete dto?.ip_whitelist_enabled;
+    }
+
     Object.entries(dto).forEach(([key, value]) => {
       service[key] = value;
     });
@@ -60,22 +73,36 @@ export class ServiceService {
       key: generateApiKey(),
       last_used: null,
     };
-    service.api_keys = [...(service.api_keys ?? []), newApiKey];
+    const {
+      auth: { api_keys },
+    } = service;
+    service.auth = {
+      ...service.auth,
+      api_keys: [...(api_keys ?? []), newApiKey],
+    };
     await service.save();
     return service;
   }
 
   async deleteApiKey(service: HydratedDocument<Service>, api_key_uuid: string) {
-    service.api_keys = service.api_keys.filter(
-      ({ uuid }) => uuid != api_key_uuid,
-    );
+    const {
+      auth: { api_keys },
+    } = service;
+    service.auth.api_keys = api_keys.filter(({ uuid }) => uuid != api_key_uuid);
+    service.markModified('auth');
     await service.save();
     return service;
   }
 
   async createIpAddress(service: HydratedDocument<Service>, value: string) {
     const newIpAddress = { uuid: uuidv4(), value };
-    service.ips = [...(service.ips ?? []), newIpAddress];
+    const {
+      ip_whitelist: { ips },
+    } = service;
+    service.ip_whitelist = {
+      ...service.ip_whitelist,
+      ips: [...(ips ?? []), newIpAddress],
+    };
     await service.save();
     return service;
   }
@@ -84,9 +111,13 @@ export class ServiceService {
     service: HydratedDocument<Service>,
     ip_address_uuid: string,
   ) {
-    service.ips = (service.ips ?? []).filter(
+    const {
+      ip_whitelist: { ips },
+    } = service;
+    service.ip_whitelist.ips = (ips ?? []).filter(
       ({ uuid }) => uuid !== ip_address_uuid,
     );
+    service.markModified('ip_whitelist');
     await service.save();
     return service;
   }

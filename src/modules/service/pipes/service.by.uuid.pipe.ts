@@ -38,11 +38,12 @@ export class ServiceByUuidPipe implements PipeTransform {
       method,
     } = this.request;
     const parsedName = capitalize(name ?? '');
+    const {
+      auth: { api_keys },
+    } = service;
+
     if (method.toLowerCase() === 'post') {
-      if (
-        !service.api_keys ||
-        !service.api_keys.map(({ name }) => name).includes(parsedName)
-      )
+      if (!api_keys.map(({ name }) => name).includes(parsedName))
         return service;
       throwException(
         HttpStatus.BAD_REQUEST,
@@ -51,8 +52,7 @@ export class ServiceByUuidPipe implements PipeTransform {
       );
     }
 
-    if (service.api_keys.map(({ uuid }) => uuid).includes(api_key_uuid))
-      return service;
+    if (api_keys.map(({ uuid }) => uuid).includes(api_key_uuid)) return service;
 
     throwException(
       HttpStatus.NOT_FOUND,
@@ -68,11 +68,11 @@ export class ServiceByUuidPipe implements PipeTransform {
       method,
     } = this.request;
 
+    const {
+      ip_whitelist: { ips },
+    } = service;
     if (method.toLowerCase() === 'post') {
-      if (
-        service.ips &&
-        service.ips.map(({ value: ipValue }) => ipValue).includes(value)
-      )
+      if (ips.map(({ value: ipValue }) => ipValue).includes(value))
         throwException(
           HttpStatus.BAD_REQUEST,
           'service-006',
@@ -81,11 +81,7 @@ export class ServiceByUuidPipe implements PipeTransform {
       return service;
     }
 
-    if (
-      service.ips &&
-      service.ips.map(({ uuid }) => uuid).includes(ip_address_uuid)
-    )
-      return service;
+    if (ips.map(({ uuid }) => uuid).includes(ip_address_uuid)) return service;
 
     throwException(
       HttpStatus.NOT_FOUND,

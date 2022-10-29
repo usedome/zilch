@@ -60,27 +60,27 @@ export class Service {
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
-    get: (auth) => {
-      if (!auth?.api_keys) return auth;
-      const { api_keys } = auth;
-      api_keys.reverse();
-      return { ...auth, api_keys: api_keys };
-    },
-    default: { is_enabled: true, api_keys: [] },
+    // get: (auth) => {
+    //   if (!auth?.api_keys) return auth;
+    //   const { api_keys } = auth;
+    //   api_keys.reverse();
+    //   return { ...auth, api_keys: api_keys };
+    // },
+    default: { is_enabled: false, api_keys: [] },
   })
   auth: ServiceAuth;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
-    get: (ipWhitelist) => {
-      if (!ipWhitelist?.ips) return ipWhitelist;
-      const { ips } = ipWhitelist;
-      ips.reverse();
-      return { ...ipWhitelist, ips };
-    },
-    default: [],
+    // get: (ipWhitelist) => {
+    //   if (!ipWhitelist?.ips) return ipWhitelist;
+    //   const { ips } = ipWhitelist;
+    //   ips.reverse();
+    //   return { ...ipWhitelist, ips };
+    // },
+    default: { is_enabled: false, ips: [] },
   })
-  ip_whitelist: ServiceIpWhitelist[];
+  ip_whitelist: ServiceIpWhitelist;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
