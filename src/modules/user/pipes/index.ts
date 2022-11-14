@@ -1,3 +1,4 @@
+export * from './change.user.auth.pipe';
 export * from './create.user.pipe';
 export * from './update.user.pipe';
 export * from './user.change.pipe';

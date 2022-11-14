@@ -16,7 +16,7 @@ class UserReset {
   expires_in: number;
 }
 
-class UserEmailReset extends UserReset {
+class UserAuthReset extends UserReset {
   email?: string;
 }
 
@@ -60,13 +60,13 @@ export class User {
   @Prop({ type: String })
   email_verification_token?: String;
 
-  @Prop({ type: MongooseSchema.Types.Mixed })
-  email_reset?: UserEmailReset;
-
   @Prop({ type: String })
   @IsString()
   @IsOptional()
   auth_type: 'GOOGLE' | 'PASSWORD';
+
+  @Prop({ type: MongooseSchema.Types.Mixed })
+  auth_reset?: UserAuthReset;
 
   @Prop({ type: String })
   @IsString()

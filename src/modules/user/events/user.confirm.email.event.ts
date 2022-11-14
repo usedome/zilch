@@ -1,7 +1,7 @@
 import { HydratedDocument } from 'mongoose';
 import { User } from '../user.schema';
 
-export class UserResetEmailEvent {
+export class UserConfirmEmailEvent {
   user: HydratedDocument<User>;
 
   constructor(user: HydratedDocument<User>) {

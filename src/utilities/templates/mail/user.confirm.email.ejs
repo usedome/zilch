@@ -1,19 +1,26 @@
 <%- include('layouts/layout.top.ejs') %>
 
-<table width="100%">
+<table
+  width="600px"
+  class="table__main"
+  align="center"
+  cellpadding="0"
+  cellspacing="0"
+  bgcolor="white"
+>
   <tr>
     <td>
       <p style="margin: 15px 0 12px 0; font-weight: bold; text-align: center">
-        Verify Your Backmeup Email
+        Confirm your Dome Email
       </p>
     </td>
   </tr>
   <tr>
     <td>
       <div>
-        Hello. A request was made to change the email address associated with
-        <%= user.first_name %> <%= user.last_name %>'s Backmeup account to this
-        email address. To complete this process, please click the link below.
+        Hello <%= user.first_name %>. A request was made to change your Dome
+        sign-in method to Email/Password and <%= user.auth_reset.email %> is the
+        specified email address. Click the link below to complete the process.
       </div>
     </td>
   </tr>
@@ -21,10 +28,10 @@
     <td>
       <div style="margin: 12px 0 2px 0">
         <a
-          href="<%= clientUrl %>/email/change/<%= user.email_reset.token %>?action=change"
+          href="<%= clientUrl %>/auth/change/<%= user.auth_reset.token %>?to=email&password"
           style="color: #000; font-size: 1em"
         >
-          <%= clientUrl %>/email/change
+          <%= clientUrl %>/auth/change
         </a>
       </div>
     </td>
@@ -33,7 +40,7 @@
     <td>
       <div style="margin-top: 10px">
         Should you be unable to use the link above, simply copy and paste this
-        link in your browser to complete the password reset process.
+        link in your browser.
       </div>
     </td>
   </tr>
@@ -43,17 +50,9 @@
         <p
           style="margin: 0; color: #000; font-size: 1em; text-decoration: none"
         >
-          <%= clientUrl %>/email/change/<%= user.email_reset.token
-          %>?action=change
+          <%= clientUrl %>/auth/change/<%= user.auth_reset.token
+          %>?to=email&password
         </p>
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <div style="margin-top: 15px">
-        <p style="margin: 0">Regards,</p>
-        <p style="margin: 2px 0 0 0">Backmeup Support</p>
       </div>
     </td>
   </tr>
