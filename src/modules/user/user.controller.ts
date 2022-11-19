@@ -32,10 +32,12 @@ import {
   UserResetPipe,
   UpdateUserPipe,
   VerifyUserPipe,
-  ChangeUserAuthPipe,
+  InitiateAuthChangePipe,
+  UserAuthChangePipe,
 } from './pipes';
 import { UserService } from './user.service';
 import {
+  UserAuthChangedEvent,
   UserConfirmEmailEvent,
   UserEmailVerifiedEvent,
   UserRegisteredEvent,
@@ -148,25 +150,54 @@ export class UserController {
     return { message: 'Password changed successfully', user };
   }
 
-  @Post('/auth/change/initiate')
+  @Post('/auth/initiate-change')
   async initiateChangeAuth(
     @Req() req: Request & { user: HydratedDocument<User> },
-    @Body(ChangeUserAuthPipe) body: ChangeAuthDto,
+    @Body(InitiateAuthChangePipe) body: ChangeAuthDto,
   ) {
-    if (!body?.email) return { message: 'Password verified successfully' };
-    const { user } = req;
-    user.password = await bcrypt.hash(body.password, 10);
-    user.auth_reset = {
-      email: body.email,
+    const auth_reset = {
       token: generateRandomToken(60),
       expires_in: Date.now() + 15 * 60 * 60 * 1000,
     };
-    await user.save();
-    this.eventEmitter.emit(
-      'user.confirm.email',
-      new UserConfirmEmailEvent(user),
-    );
+    const { user } = req;
+    if (body?.email) {
+      user.password = await bcrypt.hash(body.password, 10);
+      auth_reset['email'] = body.email;
+    }
 
-    return { message: 'Auth change confirmation email sent successfully' };
+    user.auth_reset = auth_reset;
+    await user.save();
+
+    body?.email &&
+      this.eventEmitter.emit(
+        'user.confirm.email',
+        new UserConfirmEmailEvent(user),
+      );
+
+    return {
+      message: 'Authentication change initiated',
+      token: user.auth_reset.token,
+    };
+  }
+
+  @Put('/auth/change/google')
+  async changeAuthToGoogle() {}
+
+  @Put('/auth/change/:token')
+  async changeAuthToEmail(
+    @Req() req: Request & { user: HydratedDocument<User> },
+    @Param('token', UserAuthChangePipe) token: string,
+  ) {
+    const { user } = req;
+    user.email = user?.auth_reset?.email ?? user.email;
+    user.auth_reset = undefined;
+    user.auth_type = 'PASSWORD';
+    await user.save();
+
+    this.eventEmitter.emit('user.auth.changed', new UserAuthChangedEvent(user));
+    return {
+      user,
+      message: 'Authentication method for user changed to email/password',
+    };
   }
 }

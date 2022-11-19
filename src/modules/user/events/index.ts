@@ -1,3 +1,4 @@
+export * from './user.auth.changed.event';
 export * from './user.confirm.email.event';
 export * from './user.email.verified.event';
 export * from './user.registered.event';

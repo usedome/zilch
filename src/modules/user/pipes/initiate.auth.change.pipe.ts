@@ -9,7 +9,7 @@ import { throwException } from 'src/utilities';
 import { UserService } from '../user.service';
 
 @Injectable()
-export class ChangeUserAuthPipe implements PipeTransform {
+export class InitiateAuthChangePipe implements PipeTransform {
   constructor(
     @Inject(REQUEST)
     private request: Request & { user: HydratedDocument<User> },

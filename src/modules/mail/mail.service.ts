@@ -51,11 +51,20 @@ export class MailService {
   }
 
   async handleUserConfirmEmailEvent(user: User) {
+    if (!user?.auth_reset?.email) return;
     const mailParams = {
-      to: user.email,
+      to: user.auth_reset.email,
       subject: 'Dome: Confirm Your Email',
     };
     await this.mail(mailParams, 'user.confirm.email.ejs', { user });
+  }
+
+  async handleUserAuthChangeEvent(user: User) {
+    const mailParams = {
+      to: user.email,
+      subject: 'Dome: Sign-in Method Changed',
+    };
+    await this.mail(mailParams, 'user.auth.changed.ejs', { user });
   }
 
   async mail(
