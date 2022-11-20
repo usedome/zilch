@@ -8,9 +8,11 @@ export class UserAuthChangePipe implements PipeTransform {
 
   async transform(token: string) {
     const tokenSplits = token.split('.');
+    const parsedToken =
+      tokenSplits.length > 1 ? tokenSplits[1] : tokenSplits[0];
+
     const user = await this.userService.findOne({
-      'auth_reset.token':
-        tokenSplits.length > 1 ? tokenSplits[1] : tokenSplits[0],
+      'auth_reset.token': parsedToken,
     });
 
     if (!user)
@@ -27,6 +29,6 @@ export class UserAuthChangePipe implements PipeTransform {
         'Expired authentication reset token',
       );
 
-    return token;
+    return parsedToken;
   }
 }

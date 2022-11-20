@@ -8,7 +8,10 @@ import {
   Post,
   Res,
   HttpCode,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { generateRandomToken, UnguardedAuthRoute } from 'src/utilities';
 import { EventEmitter2 } from 'eventemitter2';
 import * as bcrypt from 'bcrypt';
@@ -150,6 +153,7 @@ export class UserController {
     return { message: 'Password changed successfully', user };
   }
 
+  @HttpCode(200)
   @Post('/auth/initiate-change')
   async initiateChangeAuth(
     @Req() req: Request & { user: HydratedDocument<User> },
@@ -180,13 +184,35 @@ export class UserController {
     };
   }
 
+  @UnguardedAuthRoute()
+  @UseGuards(AuthGuard('google'))
+  @HttpCode(200)
   @Put('/auth/change/google')
-  async changeAuthToGoogle() {}
+  async changeAuthToGoogle(
+    @Req() req,
+    @Query('state', UserAuthChangePipe) token: string,
+  ) {
+    const {
+      user: { email },
+    } = req;
+    const user = await this.userService.findOne({ 'auth_reset.token': token });
+    user.email = email;
+    user.auth_type = 'GOOGLE';
+    user.auth_reset = undefined;
+    await user.save();
 
+    this.eventEmitter.emit('user.auth.changed', new UserAuthChangedEvent(user));
+    return {
+      user,
+      message: 'Authentication method for user changed to Google',
+    };
+  }
+
+  @HttpCode(200)
   @Put('/auth/change/:token')
   async changeAuthToEmail(
     @Req() req: Request & { user: HydratedDocument<User> },
-    @Param('token', UserAuthChangePipe) token: string,
+    @Param('token', UserAuthChangePipe) _: string,
   ) {
     const { user } = req;
     user.email = user?.auth_reset?.email ?? user.email;
