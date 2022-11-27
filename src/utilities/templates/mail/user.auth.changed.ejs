@@ -19,7 +19,7 @@
     <td>
       <div>
         Hello <%= user.first_name %>. Your Dome sign-in method has been
-        successfully changed to <% if (user.auth_type === 'GOOGLE') { %>
+        successfully changed to <% if (user.auth_type === 'PASSWORD') { %>
         Email/Password with <%= user.email %> being the point of reference
         email. <%} else { %> Google sign-in. <% } %>
       </div>

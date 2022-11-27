@@ -190,12 +190,11 @@ export class UserController {
   @Put('/auth/change/google')
   async changeAuthToGoogle(
     @Req() req,
-    @Query('state', UserAuthChangePipe) token: string,
+    @Query('state', UserAuthChangePipe) user: HydratedDocument<User>,
   ) {
     const {
       user: { email },
     } = req;
-    const user = await this.userService.findOne({ 'auth_reset.token': token });
     user.email = email;
     user.auth_type = 'GOOGLE';
     user.auth_reset = undefined;
@@ -209,12 +208,11 @@ export class UserController {
   }
 
   @HttpCode(200)
+  @UnguardedAuthRoute()
   @Put('/auth/change/:token')
   async changeAuthToEmail(
-    @Req() req: Request & { user: HydratedDocument<User> },
-    @Param('token', UserAuthChangePipe) _: string,
+    @Param('token', UserAuthChangePipe) user: HydratedDocument<User>,
   ) {
-    const { user } = req;
     user.email = user?.auth_reset?.email ?? user.email;
     user.auth_reset = undefined;
     user.auth_type = 'PASSWORD';

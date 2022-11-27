@@ -29,6 +29,6 @@ export class UserAuthChangePipe implements PipeTransform {
         'Expired authentication reset token',
       );
 
-    return parsedToken;
+    return user;
   }
 }
