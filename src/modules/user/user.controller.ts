@@ -8,19 +8,26 @@ import {
   Post,
   Res,
   HttpCode,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { generateRandomToken, UnguardedAuthRoute } from 'src/utilities';
 import { EventEmitter2 } from 'eventemitter2';
 import * as bcrypt from 'bcrypt';
 import { HydratedDocument } from 'mongoose';
+import { Request } from 'express';
 import { FormDataRequest } from 'nestjs-form-data';
 import {
+  ChangeAuthDto,
   ChangeEmailDto,
   ChangePasswordDto,
   CreateUserDto,
   ResetEmailDto,
   ResetPasswordDto,
   UpdateUserDto,
+  UseEmailPasswordAuthDto,
+  UseGoogleAuthDto,
 } from './dto';
 import {
   UserChangePipe,
@@ -28,14 +35,15 @@ import {
   UserResetPipe,
   UpdateUserPipe,
   VerifyUserPipe,
+  InitiateAuthChangePipe,
+  UserAuthChangePipe,
 } from './pipes';
 import { UserService } from './user.service';
 import {
-  UserEmailChangedEvent,
+  UserAuthChangedEvent,
+  UserConfirmEmailEvent,
   UserEmailVerifiedEvent,
   UserRegisteredEvent,
-  UserResetEmailEvent,
-  UserResetEmailVerifyEvent,
   UserResetPasswordEvent,
 } from './events';
 import { TokenService } from '../token/token.service';
@@ -145,53 +153,75 @@ export class UserController {
     return { message: 'Password changed successfully', user };
   }
 
-  @Post('/email/reset')
   @HttpCode(200)
-  async resetEmail(@Req() req, @Body(UserResetPipe) dto: ResetEmailDto) {
-    const { user }: Request & { user: HydratedDocument<User> } = req;
-    user.email_reset = {
+  @Post('/auth/initiate-change')
+  async initiateChangeAuth(
+    @Req() req: Request & { user: HydratedDocument<User> },
+    @Body(InitiateAuthChangePipe) body: ChangeAuthDto,
+  ) {
+    const auth_reset = {
       token: generateRandomToken(60),
       expires_in: Date.now() + 15 * 60 * 60 * 1000,
     };
-    await user.save();
-    this.eventEmitter.emit('user.reset.email', new UserResetEmailEvent(user));
-    return { message: 'Email reset mail sent successfully' };
-  }
+    const { user } = req;
+    if (body?.email) {
+      user.password = await bcrypt.hash(body.password, 10);
+      auth_reset['email'] = body.email;
+    }
 
-  @UnguardedAuthRoute()
-  @Post('/email/verify/:email_reset_token')
-  @HttpCode(200)
-  async verifyEmail(
-    @Param('email_reset_token', UserChangePipe) user: HydratedDocument<User>,
-    @Body() dto: ChangeEmailDto,
-  ) {
-    user.email_reset = {
-      token: generateRandomToken(60),
-      expires_in: Date.now() + 15 * 60 * 60 * 1000,
-      email: dto.email,
+    user.auth_reset = auth_reset;
+    await user.save();
+
+    body?.email &&
+      this.eventEmitter.emit(
+        'user.confirm.email',
+        new UserConfirmEmailEvent(user),
+      );
+
+    return {
+      message: 'Authentication change initiated',
+      token: user.auth_reset.token,
     };
-    await user.save();
-    this.eventEmitter.emit(
-      'user.reset.email.verify',
-      new UserResetEmailVerifyEvent(user, dto.email),
-    );
-    return { message: 'Email verification mail sent successfully' };
   }
 
   @UnguardedAuthRoute()
-  @Put('/email/change/:email_reset_token')
+  @UseGuards(AuthGuard('google'))
   @HttpCode(200)
-  async changeEmail(
-    @Param('email_reset_token', UserChangePipe) user: HydratedDocument<User>,
+  @Put('/auth/change/google')
+  async changeAuthToGoogle(
+    @Req() req,
+    @Query('state', UserAuthChangePipe) user: HydratedDocument<User>,
   ) {
-    const email = user.email_reset?.email as string;
-    user.email = email ?? user.email;
-    user.email_reset = undefined;
+    const {
+      user: { email },
+    } = req;
+    user.email = email;
+    user.auth_type = 'GOOGLE';
+    user.auth_reset = undefined;
     await user.save();
-    this.eventEmitter.emit(
-      'user.email.changed',
-      new UserEmailChangedEvent(user),
-    );
-    return { user, message: 'User email changed successfully' };
+
+    this.eventEmitter.emit('user.auth.changed', new UserAuthChangedEvent(user));
+    return {
+      user,
+      message: 'Authentication method for user changed to Google',
+    };
+  }
+
+  @HttpCode(200)
+  @UnguardedAuthRoute()
+  @Put('/auth/change/:token')
+  async changeAuthToEmail(
+    @Param('token', UserAuthChangePipe) user: HydratedDocument<User>,
+  ) {
+    user.email = user?.auth_reset?.email ?? user.email;
+    user.auth_reset = undefined;
+    user.auth_type = 'PASSWORD';
+    await user.save();
+
+    this.eventEmitter.emit('user.auth.changed', new UserAuthChangedEvent(user));
+    return {
+      user,
+      message: 'Authentication method for user changed to email/password',
+    };
   }
 }

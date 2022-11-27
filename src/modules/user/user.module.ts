@@ -8,15 +8,14 @@ import { ServiceModule } from '../service/service.module';
 import { MailModule } from '../mail/mail.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import {
-  UserEmailChangedListener,
+  UserAuthChangedListener,
   UserEmailVerifiedListener,
   UserRegisteredGoogleListener,
   UserRegisteredListener,
-  UserResetEmailListener,
-  UserResetEmailVerifyListener,
   UserResetPasswordListener,
 } from './listeners';
 import { TokenModule } from '../token/token.module';
+import { UserConfirmEmailListener } from './listeners/user.confirm.email.listener';
 
 @Module({
   imports: [
@@ -43,12 +42,11 @@ import { TokenModule } from '../token/token.module';
   ],
   providers: [
     UserService,
-    UserEmailChangedListener,
+    UserAuthChangedListener,
+    UserConfirmEmailListener,
     UserEmailVerifiedListener,
     UserRegisteredListener,
     UserRegisteredGoogleListener,
-    UserResetEmailListener,
-    UserResetEmailVerifyListener,
     UserResetPasswordListener,
   ],
   exports: [UserService],

@@ -50,28 +50,21 @@ export class MailService {
     await this.mail(mailParams, 'user.reset.password.ejs', { user });
   }
 
-  async handleUserResetEmailEvent(user: User) {
+  async handleUserConfirmEmailEvent(user: User) {
+    if (!user?.auth_reset?.email) return;
     const mailParams = {
-      to: user.email,
-      subject: 'Dome: Reset Your Email',
+      to: user.auth_reset.email,
+      subject: 'Dome: Confirm Your Email',
     };
-    await this.mail(mailParams, 'user.reset.email.ejs', { user });
+    await this.mail(mailParams, 'user.confirm.email.ejs', { user });
   }
 
-  async handleUserResetEmailVerifyEvent(user: User, email: string) {
-    const mailParams = {
-      to: email,
-      subject: 'Dome: Verify Your Email',
-    };
-    await this.mail(mailParams, 'user.reset.email.verify.ejs', { user, email });
-  }
-
-  async handleUserEmailChangedEvent(user: User) {
+  async handleUserAuthChangeEvent(user: User) {
     const mailParams = {
       to: user.email,
-      subject: 'Dome: Email Changed Successfully',
+      subject: 'Dome: Sign-in Method Changed',
     };
-    await this.mail(mailParams, 'user.email.changed.ejs', { user });
+    await this.mail(mailParams, 'user.auth.changed.ejs', { user });
   }
 
   async mail(

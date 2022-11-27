@@ -86,7 +86,8 @@ export class ServiceController {
       service,
       body.name,
     );
-    const apiKey = updatedService.api_keys[updatedService.api_keys.length - 1];
+    const apiKey =
+      updatedService.auth.api_keys[updatedService.auth.api_keys.length - 1];
     res.status(201).json({ apiKey, message: 'API Key created successfully' });
   }
 
@@ -110,7 +111,8 @@ export class ServiceController {
       service,
       body.value,
     );
-    const ip = updatedService.ips[service.ips.length - 1];
+    const ip =
+      updatedService.ip_whitelist.ips[service.ip_whitelist.ips.length - 1];
     res.status(201).json({ ip, message: 'ip address created successfully' });
   }
 

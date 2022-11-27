@@ -5,11 +5,21 @@ import { User } from '../user/user.schema';
 
 export type ServiceDocument = Service & Document;
 
+export class ServiceAuth {
+  is_enabled: boolean;
+  api_keys: ServiceApiKey[];
+}
+
 export class ServiceApiKey {
   name: string;
   uuid: string;
   key: string;
   last_used: Date | null;
+}
+
+class ServiceIpWhitelist {
+  is_enabled: boolean;
+  ips: ServiceIpAddress[];
 }
 
 export class ServiceIpAddress {
@@ -50,25 +60,27 @@ export class Service {
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
-    get: (api_keys) => {
-      if (!api_keys) return [];
-      api_keys.reverse();
-      return api_keys;
-    },
-    default: [],
+    // get: (auth) => {
+    //   if (!auth?.api_keys) return auth;
+    //   const { api_keys } = auth;
+    //   api_keys.reverse();
+    //   return { ...auth, api_keys: api_keys };
+    // },
+    default: { is_enabled: false, api_keys: [] },
   })
-  api_keys: ServiceApiKey[];
+  auth: ServiceAuth;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,
-    get: (ips) => {
-      if (!ips) return [];
-      ips.reverse();
-      return ips;
-    },
-    default: [],
+    // get: (ipWhitelist) => {
+    //   if (!ipWhitelist?.ips) return ipWhitelist;
+    //   const { ips } = ipWhitelist;
+    //   ips.reverse();
+    //   return { ...ipWhitelist, ips };
+    // },
+    default: { is_enabled: false, ips: [] },
   })
-  ips: ServiceIpAddress[];
+  ip_whitelist: ServiceIpWhitelist;
 
   @Prop({
     type: MongooseSchema.Types.Mixed,

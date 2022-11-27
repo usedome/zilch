@@ -16,14 +16,36 @@ export class GoogleAccountStrategy extends PassportStrategy(
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
       callbackURL: configService.get('GOOGLE_CLIENT_REDIRECT'),
       scope: ['email', 'profile'],
+      passReqToCallback: true,
     });
   }
 
-  async validate(_: string, __: string, profile: any, verify: VerifyCallback) {
+  authenticate(req: any, options: any) {
+    const { query } = req;
+
+    if (query?.state) {
+      options.state = query.state;
+    }
+
+    super.authenticate(req, options);
+  }
+
+  async validate(
+    req: any,
+    _: string,
+    __: string,
+    profile: any,
+    verify: VerifyCallback,
+  ) {
+    const { query } = req;
+
     const { name: profileName, emails, photos } = profile;
     const first_name = profileName.givenName;
     const last_name = profileName.familyName;
     const email = emails[0].value;
+
+    if (query?.state) return verify(null, { email });
+
     const avatar = photos[0].value;
     const user = await this.userService.firstOrCreate(email, {
       first_name,
