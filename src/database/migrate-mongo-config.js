@@ -3,7 +3,7 @@
 const config = {
   mongodb: {
     // TODO Change (or review) the url to your MongoDB:
-    url: 'mongodb+srv://Olamileke:Arsenalfc1886@backmeup.fvhaw.mongodb.net/Backmeup?authSource=admin&replicaSet=atlas-ygzf1z-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
+    url: '',
 
     options: {
       useNewUrlParser: true, // removes a deprecation warning when connecting
