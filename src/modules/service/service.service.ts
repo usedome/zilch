@@ -77,6 +77,7 @@ export class ServiceService {
       resource: { $in: resourceIds },
     });
     await this.resourceService.deleteMany({ service: service._id });
+    await service.delete();
   }
 
   async createApiKey(service: HydratedDocument<Service>, name: string) {

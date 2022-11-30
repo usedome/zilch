@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Post,
@@ -79,6 +80,7 @@ export class ServiceController {
   }
 
   @Delete('/:uuid')
+  @HttpCode(204)
   async delete(
     @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
     @Body(DeleteServicePipe) _: DeleteServiceDto,
@@ -87,6 +89,9 @@ export class ServiceController {
     await this.serviceService.delete(service);
     const { user: initialUser } = req;
     const user = initialUser.toJSON();
+    initialUser.default_service =
+      user.services.length > 0 ? String(user.services[0]._id) : undefined;
+    await initialUser.save();
   }
 
   @Post('/:uuid/api-keys')
