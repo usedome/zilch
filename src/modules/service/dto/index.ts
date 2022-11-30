@@ -16,6 +16,12 @@ export class UpdateServiceDto extends PartialType(CreateServiceDto) {
   ip_whitelist_enabled?: boolean;
 }
 
+export class DeleteServiceDto {
+  @IsString()
+  @IsDefined()
+  password: string;
+}
+
 export class CreateApiKeyDto {
   @IsDefined()
   @IsString()

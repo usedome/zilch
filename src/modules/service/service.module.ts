@@ -5,6 +5,8 @@ import { Service, ServiceSchema } from './service.schema';
 import { ServiceController } from './service.controller';
 import { ServiceService } from './service.service';
 import { UserModule } from '../user/user.module';
+import { ResourceModule } from '../resource/resource.module';
+import { BackupModule } from '../backup/backup.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { UserModule } from '../user/user.module';
       },
     ]),
     forwardRef(() => UserModule),
+    forwardRef(() => BackupModule),
+    ResourceModule,
   ],
   controllers: [ServiceController],
   providers: [ServiceService],

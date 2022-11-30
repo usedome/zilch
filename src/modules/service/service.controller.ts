@@ -18,13 +18,15 @@ import {
   CreateServiceDto,
   UpdateNotificationDto,
   UpdateServiceDto,
+  DeleteServiceDto,
 } from './dto';
-import { EditServicePipe } from './pipes';
-import { ServiceByUuidPipe } from './pipes/service.by.uuid.pipe';
+import { DeleteServicePipe, EditServicePipe, ServiceByUuidPipe } from './pipes';
 import { ServiceService } from './service.service';
 import { HydratedDocument } from 'mongoose';
 import { Service } from './service.schema';
 import { UserService } from '../user/user.service';
+import { ResourceService } from '../resource/resource.service';
+import { User } from '../user/user.schema';
 
 @Controller('services')
 export class ServiceController {
@@ -74,6 +76,17 @@ export class ServiceController {
   ) {
     const updatedService = await this.serviceService.update(service, body);
     return { service: updatedService, message: 'service updated successfully' };
+  }
+
+  @Delete('/:uuid')
+  async delete(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Body(DeleteServicePipe) _: DeleteServiceDto,
+    @Req() req: Request & { user: HydratedDocument<User> },
+  ) {
+    await this.serviceService.delete(service);
+    const { user: initialUser } = req;
+    const user = initialUser.toJSON();
   }
 
   @Post('/:uuid/api-keys')

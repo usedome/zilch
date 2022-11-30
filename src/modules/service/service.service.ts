@@ -9,11 +9,15 @@ import {
   UpdateServiceDto,
 } from './dto';
 import { capitalize, generateApiKey } from 'src/utilities';
+import { ResourceService } from '../resource/resource.service';
+import { BackupService } from '../backup/backup.service';
 
 @Injectable()
 export class ServiceService {
   constructor(
     @InjectModel(Service.name) private service: Model<ServiceDocument>,
+    private resourceService: ResourceService,
+    private backupService: BackupService,
   ) {}
 
   async create(dto: CreateServiceDto, user: string) {
@@ -64,6 +68,15 @@ export class ServiceService {
     });
     await service.save();
     return service;
+  }
+
+  async delete(service: HydratedDocument<Service>) {
+    const resources = await this.resourceService.find({ service: service._id });
+    const resourceIds = resources.map(({ _id }) => _id);
+    await this.backupService.deleteMany({
+      resource: { $in: resourceIds },
+    });
+    await this.resourceService.deleteMany({ service: service._id });
   }
 
   async createApiKey(service: HydratedDocument<Service>, name: string) {
