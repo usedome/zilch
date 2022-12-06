@@ -19,14 +19,12 @@ import {
   CreateServiceDto,
   UpdateNotificationDto,
   UpdateServiceDto,
-  DeleteServiceDto,
 } from './dto';
-import { DeleteServicePipe, EditServicePipe, ServiceByUuidPipe } from './pipes';
+import { EditServicePipe, ServiceByUuidPipe } from './pipes';
 import { ServiceService } from './service.service';
 import { HydratedDocument } from 'mongoose';
 import { Service } from './service.schema';
 import { UserService } from '../user/user.service';
-import { ResourceService } from '../resource/resource.service';
 import { User } from '../user/user.schema';
 
 @Controller('services')
@@ -83,7 +81,6 @@ export class ServiceController {
   @HttpCode(204)
   async delete(
     @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
-    @Body(DeleteServicePipe) _: DeleteServiceDto,
     @Req() req: Request & { user: HydratedDocument<User> },
   ) {
     await this.serviceService.delete(service);
