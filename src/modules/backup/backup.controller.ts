@@ -81,7 +81,7 @@ export class BackupController {
       res.status(204);
     } catch (error) {
       return throwException(
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.BAD_GATEWAY,
         'backup-002',
         `there was a problem deleting backup with uuid ${backup.uuid}`,
       );

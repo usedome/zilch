@@ -13,7 +13,6 @@ import { ConfigModule } from '../config/config.module';
   imports: [
     ConfigModule,
     HttpModule,
-    ResourceModule,
     forwardRef(() => ServiceModule),
     MongooseModule.forFeatureAsync([
       {
@@ -26,6 +25,7 @@ import { ConfigModule } from '../config/config.module';
         },
       },
     ]),
+    forwardRef(() => ResourceModule),
   ],
   controllers: [BackupController],
   providers: [BackupService],

@@ -4,12 +4,14 @@ import {
   Post,
   Get,
   Res,
+  Req,
   Delete,
   Param,
   DefaultValuePipe,
   ParseIntPipe,
   Query,
   Put,
+  HttpStatus,
 } from '@nestjs/common';
 import { Service } from '../service/service.schema';
 import { CreateResourceDto } from './dto';
@@ -19,10 +21,21 @@ import { ResourceService } from './resource.service';
 import { ServiceByUuidPipe } from '../service/pipes/service.by.uuid.pipe';
 import { Resource } from './resource.schema';
 import { ResourceByUuidPipe } from './pipes/resource.by.uuid.pipe';
+import { BackupService } from '../backup/backup.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { Request } from 'express';
+import { ConfigService } from '../config/config.service';
+import { throwException } from 'src/utilities';
 
 @Controller('/services/:service_uuid/resources')
 export class ResourceController {
-  constructor(private resourceService: ResourceService) {}
+  constructor(
+    private resourceService: ResourceService,
+    private backupService: BackupService,
+    private httpService: HttpService,
+    private configService: ConfigService,
+  ) {}
 
   @Post()
   async create(
@@ -97,8 +110,34 @@ export class ResourceController {
   async deleteResource(
     @Param('resource_uuid', ResourceByUuidPipe)
     resource: HydratedDocument<Resource>,
+    @Req() request: Request,
     @Res({ passthrough: true }) res,
   ) {
+    const { headers } = request;
+    const backupCount = await this.backupService.count({
+      resource: resource._id,
+    });
+
+    if (backupCount > 0) {
+      try {
+        const url =
+          this.configService.get('DURAN_API_URL') +
+          `/resources/${resource.uuid}`;
+        await firstValueFrom(
+          this.httpService.delete(url, {
+            headers: { authorization: headers?.authorization ?? '' },
+          }),
+        );
+        await this.backupService.deleteMany({ resource: resource._id });
+      } catch (error) {
+        throwException(
+          HttpStatus.BAD_GATEWAY,
+          'resource-002',
+          `there was a problem deleting the resource with uuid ${resource.uuid}`,
+        );
+      }
+    }
+
     await resource.delete();
     res.status(204);
   }

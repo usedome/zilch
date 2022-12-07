@@ -5,10 +5,12 @@ import { Resource, ResourceSchema } from './resource.schema';
 import { ResourceService } from './resource.service';
 import { ResourceController } from './resource.controller';
 import { ServiceModule } from '../service/service.module';
+import { BackupModule } from '../backup/backup.module';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
   imports: [
-    forwardRef(() => ServiceModule),
     MongooseModule.forFeatureAsync([
       {
         name: Resource.name,
@@ -20,6 +22,10 @@ import { ServiceModule } from '../service/service.module';
         },
       },
     ]),
+    ConfigModule,
+    HttpModule,
+    forwardRef(() => ServiceModule),
+    forwardRef(() => BackupModule),
   ],
   providers: [ResourceService],
   controllers: [ResourceController],

@@ -70,16 +70,6 @@ export class ServiceService {
     return service;
   }
 
-  async delete(service: HydratedDocument<Service>) {
-    const resources = await this.resourceService.find({ service: service._id });
-    const resourceIds = resources.map(({ _id }) => _id);
-    await this.backupService.deleteMany({
-      resource: { $in: resourceIds },
-    });
-    await this.resourceService.deleteMany({ service: service._id });
-    await service.delete();
-  }
-
   async createApiKey(service: HydratedDocument<Service>, name: string) {
     const newApiKey = {
       name: capitalize(name),
