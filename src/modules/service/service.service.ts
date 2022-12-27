@@ -9,11 +9,15 @@ import {
   UpdateServiceDto,
 } from './dto';
 import { capitalize, generateApiKey } from 'src/utilities';
+import { ResourceService } from '../resource/resource.service';
+import { BackupService } from '../backup/backup.service';
 
 @Injectable()
 export class ServiceService {
   constructor(
     @InjectModel(Service.name) private service: Model<ServiceDocument>,
+    private resourceService: ResourceService,
+    private backupService: BackupService,
   ) {}
 
   async create(dto: CreateServiceDto, user: string) {

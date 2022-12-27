@@ -4,6 +4,7 @@ import {
   Param,
   Get,
   Delete,
+  Req,
   Res,
   ParseIntPipe,
   HttpStatus,
@@ -18,6 +19,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { throwException } from '../../utilities';
+import { Request } from 'express';
 
 @Controller('/resources/:resource_uuid/backups')
 export class BackupController {
@@ -62,17 +64,24 @@ export class BackupController {
   @Delete('/:backup_uuid')
   async deleteBackup(
     @Param('backup_uuid', BackupByUuidPipe) backup: HydratedDocument<Backup>,
+    @Req() req: Request,
     @Res({ passthrough: true }) res,
   ) {
+    const { headers } = req;
     const url =
       this.configService.get('DURAN_API_URL') + `/backups/${backup.uuid}`;
 
     try {
-      await firstValueFrom(this.httpService.delete(url));
+      await firstValueFrom(
+        this.httpService.delete(url, {
+          headers: { authorization: headers?.authorization ?? '' },
+        }),
+      );
+      await backup.delete();
       res.status(204);
     } catch (error) {
       return throwException(
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.BAD_GATEWAY,
         'backup-002',
         `there was a problem deleting backup with uuid ${backup.uuid}`,
       );

@@ -23,4 +23,8 @@ export class BackupService {
   async count(filter: { [key: string]: any }) {
     return await this.backup.countDocuments({ ...filter });
   }
+
+  async deleteMany(filter: { [key: string]: any }) {
+    await this.backup.deleteMany({ ...filter });
+  }
 }

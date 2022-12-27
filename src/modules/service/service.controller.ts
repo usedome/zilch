@@ -4,6 +4,8 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -19,18 +21,29 @@ import {
   UpdateNotificationDto,
   UpdateServiceDto,
 } from './dto';
-import { EditServicePipe } from './pipes';
-import { ServiceByUuidPipe } from './pipes/service.by.uuid.pipe';
+import { EditServicePipe, ServiceByUuidPipe } from './pipes';
 import { ServiceService } from './service.service';
 import { HydratedDocument } from 'mongoose';
 import { Service } from './service.schema';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.schema';
+import { BackupService } from '../backup/backup.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { ResourceService } from '../resource/resource.service';
+import { Request } from 'express';
+import { ConfigService } from '../config/config.service';
+import { throwException } from 'src/utilities';
 
 @Controller('services')
 export class ServiceController {
   constructor(
     private serviceService: ServiceService,
     private userService: UserService,
+    private resourceService: ResourceService,
+    private backupService: BackupService,
+    private httpService: HttpService,
+    private configService: ConfigService,
   ) {}
 
   @Post()
@@ -74,6 +87,47 @@ export class ServiceController {
   ) {
     const updatedService = await this.serviceService.update(service, body);
     return { service: updatedService, message: 'service updated successfully' };
+  }
+
+  @Delete('/:uuid')
+  @HttpCode(204)
+  async delete(
+    @Param('uuid', ServiceByUuidPipe) service: HydratedDocument<Service>,
+    @Req() request: Request & { user: HydratedDocument<User> },
+  ) {
+    const { headers, user: initialUser } = request;
+    const resources = await this.resourceService.find({ service: service._id });
+    const resourceIds = resources.map(({ _id }) => _id);
+    const backupCount = await this.backupService.count({
+      resource: { $in: resourceIds },
+    });
+
+    if (backupCount > 0) {
+      try {
+        const url =
+          this.configService.get('DURAN_API_URL') + `/services/${service.uuid}`;
+        await firstValueFrom(
+          this.httpService.delete(url, {
+            headers: { authorization: headers?.authorization ?? '' },
+          }),
+        );
+        await this.backupService.deleteMany({
+          resource: { $in: resourceIds },
+        });
+        await this.resourceService.deleteMany({ service: service._id });
+      } catch (error) {
+        throwException(
+          HttpStatus.BAD_GATEWAY,
+          'service-002',
+          `there was a problem deleting the service with uuid $${service.uuid}`,
+        );
+      }
+    }
+    await service.delete();
+    const user = initialUser.toJSON();
+    initialUser.default_service =
+      user.services.length > 0 ? String(user.services[0]._id) : undefined;
+    await initialUser.save();
   }
 
   @Post('/:uuid/api-keys')

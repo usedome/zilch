@@ -5,6 +5,10 @@ import { Service, ServiceSchema } from './service.schema';
 import { ServiceController } from './service.controller';
 import { ServiceService } from './service.service';
 import { UserModule } from '../user/user.module';
+import { ResourceModule } from '../resource/resource.module';
+import { BackupModule } from '../backup/backup.module';
+import { ConfigModule } from '../config/config.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -20,6 +24,10 @@ import { UserModule } from '../user/user.module';
       },
     ]),
     forwardRef(() => UserModule),
+    forwardRef(() => BackupModule),
+    HttpModule,
+    ConfigModule,
+    ResourceModule,
   ],
   controllers: [ServiceController],
   providers: [ServiceService],

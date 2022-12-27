@@ -18,7 +18,7 @@ export class ResourceService {
     return resource;
   }
 
-  async find(filter: { [key: string]: string }) {
+  async find(filter: { [key: string]: any }) {
     return await this.resource.find({ ...filter }).sort({ created_at: -1 });
   }
 
@@ -44,5 +44,9 @@ export class ResourceService {
 
     await resource.save();
     return resource;
+  }
+
+  async deleteMany(filter: { [key: string]: any }) {
+    await this.resource.deleteMany({ ...filter });
   }
 }
