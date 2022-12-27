@@ -68,7 +68,7 @@ jobs:
 
       - name: Deploy Application
         id: deploy
-        run: ssh me-docker 'cd /home/Olamileke/me-docker && ./deploy.sh ${{ secrets.DOCKERHUB_REPO }}'
+        run: ssh me-docker 'cd /home/Olamileke/dome-docker && ./deploy.sh ${{ secrets.DOCKERHUB_REPO }}'
 
       - name: Send out notification if deploy is successful
         if: ${{ steps.deploy.conclusion == 'success' }}
