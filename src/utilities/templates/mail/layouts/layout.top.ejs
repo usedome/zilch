@@ -1,74 +1,60 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Dome</title>
-    <style type="text/css">
-      @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
 
-      a {
-        text-decoration: underline;
-      }
+<head>
+  <title>Dome</title>
+  <style type="text/css">
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
 
+    a {
+      text-decoration: underline;
+    }
+
+    .table__parent {
+      padding: 50px 50px 60px 50px;
+    }
+
+    .table__main {
+      padding: 30px 30px 40px 30px;
+      line-height: 1.78;
+    }
+
+    .logo {
+      object-fit: contain;
+    }
+
+    @media (max-width: 610px) {
       .table__parent {
-        padding: 50px 50px 60px 50px;
+        padding: 10px;
       }
 
       .table__main {
-        padding: 30px 30px 40px 30px;
-        line-height: 1.78;
+        width: 100%;
+        padding: 20px 15px 20px 15px;
       }
 
       .logo {
-        object-fit: cover;
+        margin: 25px 0 0 15px;
       }
+    }
+  </style>
+</head>
 
-      @media (max-width: 610px) {
-        .table__parent {
-          padding: 10px;
-        }
-
-        .table__main {
-          width: 100%;
-          padding: 20px 15px 20px 15px;
-        }
-
-        .logo {
-          margin: 25px 0 0 15px;
-        }
-      }
-    </style>
-  </head>
-
-  <body
-    style="
+<body style="
       margin: 0;
       padding: 0;
       font-family: 'Quicksand', 'Century Gothic', 'Trebuchet MS', 'Verdana',
         sans-serif;
       color: #000;
-    "
-  >
-    <table
-      width="100%"
-      class="table__parent"
-      cellpadding="0"
-      cellspacing="0"
-      style="background: #fbfbfb; font-size: 1.15em"
-    >
-      <tr>
-        <td align="center">
-          <img
-            class="logo"
-            src="https://res.cloudinary.com/olamileke/image/upload/v1672075547/dome/assets/logos/icons8-papers-64_nsizg3.png"
-            width="200px"
-            height="60px"
-            alt="Dome"
-          />
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-      </tr>
-    </table>
-  </body>
-</html>
+    ">
+  <table width="100%" class="table__parent" cellpadding="0" cellspacing="0"
+    style="background: #fbfbfb; font-size: 1.15em">
+    <tr>
+      <td align="center">
+        <img class="logo"
+          src="https://res.cloudinary.com/olamileke/image/upload/v1672075547/dome/assets/logos/icons8-papers-64_nsizg3.png"
+          width="200px" height="45px" style="margin: 0 0 25px 0;" alt="Dome" />
+      </td>
+    </tr>
+    <tr>
+      <td>
