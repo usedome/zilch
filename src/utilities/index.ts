@@ -1,3 +1,4 @@
+export * from './cloudinary';
 export * from './exception';
 export * from './key';
 export * from './plugins';

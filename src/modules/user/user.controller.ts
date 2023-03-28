@@ -10,6 +10,8 @@ import {
   HttpCode,
   UseGuards,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { generateRandomToken, UnguardedAuthRoute } from 'src/utilities';
@@ -17,17 +19,12 @@ import { EventEmitter2 } from 'eventemitter2';
 import * as bcrypt from 'bcrypt';
 import { HydratedDocument } from 'mongoose';
 import { Request } from 'express';
-import { FormDataRequest } from 'nestjs-form-data';
 import {
   ChangeAuthDto,
-  ChangeEmailDto,
   ChangePasswordDto,
   CreateUserDto,
-  ResetEmailDto,
   ResetPasswordDto,
   UpdateUserDto,
-  UseEmailPasswordAuthDto,
-  UseGoogleAuthDto,
 } from './dto';
 import {
   UserChangePipe,
@@ -37,6 +34,7 @@ import {
   VerifyUserPipe,
   InitiateAuthChangePipe,
   UserAuthChangePipe,
+  FileValidationPipe,
 } from './pipes';
 import { UserService } from './user.service';
 import {
@@ -48,12 +46,17 @@ import {
 } from './events';
 import { TokenService } from '../token/token.service';
 import { User } from './user.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { uploadToCloudinary } from 'src/utilities';
+import { ConfigService } from '../config/config.service';
+import { diskStorage } from 'multer';
 
 @Controller('/me')
 export class UserController {
   constructor(
     private userService: UserService,
     private tokenService: TokenService,
+    private configService: ConfigService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -102,10 +105,17 @@ export class UserController {
     return { user, message: 'user fetched successfully' };
   }
 
-  @FormDataRequest()
   @Put()
-  async updateMe(@Req() req, @Body(UpdateUserPipe) body: UpdateUserDto) {
+  @UseInterceptors(FileInterceptor('avatar', { storage: diskStorage({}) }))
+  async updateMe(
+    @Req() req,
+    @Body(UpdateUserPipe) body,
+    @UploadedFile(FileValidationPipe) file?: Express.Multer.File,
+  ) {
     const { user } = req;
+
+    if (file) body.avatar = await uploadToCloudinary(file, this.configService);
+
     const updatedUser = await this.userService.update(user, body);
     return {
       user: updatedUser,
