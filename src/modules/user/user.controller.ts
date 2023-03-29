@@ -114,7 +114,8 @@ export class UserController {
   ) {
     const { user } = req;
 
-    if (file) body.avatar = await uploadToCloudinary(file, this.configService);
+    if (file)
+      body.avatar = await uploadToCloudinary(file, this.configService, user);
 
     const updatedUser = await this.userService.update(user, body);
     return {
