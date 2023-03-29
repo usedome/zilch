@@ -19,7 +19,7 @@ export class CreateUserDto extends PickType(User, [
 export class UpdateUserDto extends PartialType(
   PickType(User, ['first_name', 'last_name', 'default_service'] as const),
 ) {
-  avatar?: File;
+  avatar?: string;
 }
 
 export class ResetPasswordDto extends PickType(User, ['email'] as const) {}

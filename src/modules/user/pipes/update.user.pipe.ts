@@ -3,17 +3,15 @@ import { REQUEST } from '@nestjs/core';
 import { ServiceService } from 'src/modules/service/service.service';
 import { throwException } from 'src/utilities';
 import { UpdateUserDto } from '../dto';
-import { UserService } from '../user.service';
 
 @Injectable()
 export class UpdateUserPipe implements PipeTransform {
   constructor(
     @Inject(REQUEST) private request,
-    private userService: UserService,
     private serviceService: ServiceService,
   ) {}
 
-  async transform(value: UpdateUserDto) {
+  async transform(value: any) {
     if (!value.default_service) return value;
 
     return this.validateDefaultService(value);

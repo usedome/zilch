@@ -6,7 +6,6 @@ import { userPlugin, uuidPlugin } from 'src/utilities';
 import { UserController } from './user.controller';
 import { ServiceModule } from '../service/service.module';
 import { MailModule } from '../mail/mail.module';
-import { NestjsFormDataModule } from 'nestjs-form-data';
 import {
   UserAuthChangedListener,
   UserEmailVerifiedListener,
@@ -16,6 +15,7 @@ import {
 } from './listeners';
 import { TokenModule } from '../token/token.module';
 import { UserConfirmEmailListener } from './listeners/user.confirm.email.listener';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
   imports: [
@@ -35,10 +35,10 @@ import { UserConfirmEmailListener } from './listeners/user.confirm.email.listene
         },
       },
     ]),
-    NestjsFormDataModule,
     forwardRef(() => ServiceModule),
     forwardRef(() => TokenModule),
     MailModule,
+    ConfigModule,
   ],
   providers: [
     UserService,
