@@ -125,6 +125,9 @@ export class ServiceController {
     }
     await service.delete();
     const user = initialUser.toJSON();
+    user.services = user.services.filter(
+      (userService) => userService?.uuid !== service.uuid,
+    );
     initialUser.default_service =
       user.services.length > 0 ? String(user.services[0]._id) : undefined;
     await initialUser.save();
