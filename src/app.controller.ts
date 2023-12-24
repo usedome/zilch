@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { UnguardedAuthRoute } from './utilities';
 
 @Controller()
@@ -9,5 +9,11 @@ export class AppController {
   @UnguardedAuthRoute()
   getHello(): string {
     return 'Hello from the BackMeUp Index File';
+  }
+
+  @Post('/ping')
+  @UnguardedAuthRoute()
+  ping() {
+    return { status: 'ok' };
   }
 }
