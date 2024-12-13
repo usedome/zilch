@@ -1,19 +1,20 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Post, HttpCode } from '@nestjs/common';
 import { UnguardedAuthRoute } from './utilities';
+import { ResourceService } from './modules/resource/resource.service';
 
 @Controller()
 export class AppController {
-  constructor() {}
-
-  @Get()
-  @UnguardedAuthRoute()
-  getHello(): string {
-    return 'Hello from the BackMeUp Index File';
-  }
+  constructor(private resourceService: ResourceService) {}
 
   @Post('/ping')
   @UnguardedAuthRoute()
-  ping() {
-    return { status: 'ok' };
+  @HttpCode(200)
+  async ping() {
+    try {
+      await this.resourceService.findOne({ uuid: 'some-random-uuid' });
+      return { database: 'healthy' };
+    } catch (error) {
+      return { database: 'unhealthy' };
+    }
   }
 }
