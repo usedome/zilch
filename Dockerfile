@@ -8,7 +8,7 @@ COPY package.json ./
 
 COPY yarn.lock ./
 
-RUN yarn add glob rimraf 
+RUN yarn add glob rimraf --ignore-engines
 
 RUN apk add --update python3 make g++\ && rm -rf /var/cache/apk/*
 
@@ -27,7 +27,7 @@ WORKDIR usr/src/app
 
 COPY package.json ./
 
-RUN yarn install
+RUN yarn install --ignore-engines
 
 COPY --from=build /usr/src/app/dist /usr/src/app/dist
 
